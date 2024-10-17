@@ -1,0 +1,22 @@
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch main
+# Your branch and 'origin/main' have diverged,
+# and have 2 and 1 different commits each, respectively.
+#
+# Changes to be committed:
+#	renamed:    app/src/main/java/com/example/skill_cinema/ui/CinemaDetailsScreen.kt -> app/src/main/java/com/example/skill_cinema/ui/home/CinemaDetailsScreen.kt
+#	renamed:    app/src/main/java/com/example/skill_cinema/ui/CinemaItemCard.kt -> app/src/main/java/com/example/skill_cinema/ui/home/CinemaItemCard.kt
+#	renamed:    app/src/main/java/com/example/skill_cinema/ui/CinemaSection.kt -> app/src/main/java/com/example/skill_cinema/ui/home/CinemaSection.kt
+#	renamed:    app/src/main/java/com/example/skill_cinema/ui/HomePage.kt -> app/src/main/java/com/example/skill_cinema/ui/home/HomePage.kt
+#
+# Changes not staged for commit:
+#	modified:   .idea/misc.xml
+#	modified:   app/src/main/java/com/example/skill_cinema/MainActivity.kt
+#	modified:   app/src/main/java/com/example/skill_cinema/ui/home/CinemaDetailsScreen.kt
+#	modified:   app/src/main/java/com/example/skill_cinema/ui/home/CinemaItemCard.kt
+#	modified:   app/src/main/java/com/example/skill_cinema/ui/home/CinemaSection.kt
+#	modified:   app/src/main/java/com/example/skill_cinema/ui/home/HomePage.kt
+#
