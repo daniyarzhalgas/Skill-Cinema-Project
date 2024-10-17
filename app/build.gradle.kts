@@ -86,6 +86,9 @@ dependencies {
 
     implementation (libs.androidx.navigation.compose.v250)
 
-
+    //Navigation Compose
+    implementation("androidx.navigation:navigation-compose:2.8.2")
+    //For Bottom Navigation
+    implementation("androidx.compose.material:material:1.5.0")
 }
 
