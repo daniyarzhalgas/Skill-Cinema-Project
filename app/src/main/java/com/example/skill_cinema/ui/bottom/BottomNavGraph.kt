@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.example.myapplication.screens.HomeScreen
 import com.example.myapplication.screens.ProfileScreen
 import com.example.myapplication.screens.SearchScreen
+import com.example.skill_cinema.ui.bottom.BottomBarScreen
 import com.example.skill_cinema.ui.home.CinemaDetailsScreen
 
 @Composable

@@ -11,7 +11,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.MainScreen
+import com.example.myapplication.screens.HomeScreen
+import com.example.skill_cinema.ui.onboarding.Loader
+import com.example.skill_cinema.ui.onboarding.OnBoardingScreen
 import com.example.skill_cinema.ui.theme.SkillCinemaTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,7 +26,18 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SkillCinemaTheme {
-                MainScreen()
+                val navController = rememberNavController();
+                NavHost(navController, "onboarding_screen") {
+                    composable("onboarding_screen") {
+                        OnBoardingScreen(navController)
+                    }
+                    composable("loader_screen") {
+                        Loader(navController)
+                    }
+                    composable("home_screen") {
+                        MainScreen()
+                    }
+                }
             }
         }
     }

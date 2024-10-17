@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.skill_cinema.ui.bottom
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
