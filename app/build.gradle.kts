@@ -1,15 +1,18 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
-    namespace = "com.example.skill_cinema"
+    namespace = "sdu.project.cinemaapp"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.skill_cinema"
-        minSdk = 25
+        applicationId = "sdu.project.cinemaapp"
+        minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -35,6 +38,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+
     }
     buildFeatures {
         compose = true
@@ -59,8 +63,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.ui.test.android)
-    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.appcompat)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -69,27 +72,27 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    //Coil
+    implementation("io.coil-kt:coil-compose:2.5.0")
 
-    //splash api
-    implementation(libs.androidx.core.splashscreen)
-
-    //navigation compose
-    implementation(libs.androidx.navigation.compose)
-
-    //datastore preferences
-    implementation(libs.androidx.datastore.preferences)
-
-
-    //
-    implementation(libs.hilt.android)
-
-    implementation (libs.coil.compose)
-
-    implementation (libs.androidx.navigation.compose.v250)
+    //dagger hilt
+    implementation(libs.hilt.android.v252)
+    kapt(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose.v110)
 
     //Navigation Compose
     implementation("androidx.navigation:navigation-compose:2.8.2")
     //For Bottom Navigation
     implementation("androidx.compose.material:material:1.5.0")
+
+
+
+}
+
+kapt {
+    correctErrorTypes = true
 }
 
