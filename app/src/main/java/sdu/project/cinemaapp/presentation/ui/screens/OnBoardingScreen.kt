@@ -1,4 +1,4 @@
-package sdu.project.cinemaapp.ui.onboarding
+package sdu.project.cinemaapp.presentation.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -10,17 +10,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,13 +29,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.example.skill_cinema.R
-import kotlinx.coroutines.delay
+import sdu.project.cinemaapp.R
+import sdu.project.cinemaapp.domain.model.ListOnBoarding
 
 
 @Composable
-fun OnBoardingScreen(navController: NavController) {
+fun OnBoardingScreen(onClick:()->Unit) {
     val state = rememberPagerState(pageCount = { 3 })
 
     val listOnBoarding = listOf(
@@ -51,7 +46,7 @@ fun OnBoardingScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp)
+            .padding(horizontal = 24.dp)
     ) {
         Row(
             modifier = Modifier
@@ -62,10 +57,7 @@ fun OnBoardingScreen(navController: NavController) {
         ) {
             Image(painter = painterResource(id = R.drawable.skillcinema), contentDescription = null)
             TextButton(
-                onClick = {
-                    navController.navigate("loader_screen") {
-                    }
-                }
+                onClick = onClick
             ) {
                 Text(
                     "Пропустить", style = TextStyle(
@@ -81,8 +73,8 @@ fun OnBoardingScreen(navController: NavController) {
         }
         HorizontalPager(
             state = state
-        ) { page ->
-            OnBoardingPage(listOnBoarding = listOnBoarding[page])
+        ){ page ->
+            OnBoardingPager(listOnBoarding[page])
         }
         Row(
             modifier = Modifier
@@ -90,14 +82,15 @@ fun OnBoardingScreen(navController: NavController) {
                 .padding(top = 56.dp)
         )
         {
-            repeat(state.pageCount) { iteration ->
-                val color = if (state.currentPage == iteration) Color.DarkGray else Color.LightGray
+            repeat(state.pageCount) { index ->
+                val color = if (index == state.currentPage) Color.DarkGray else Color.LightGray
+
                 Box(
                     modifier = Modifier
                         .padding(2.dp)
                         .clip(CircleShape)
-                        .background(color)
                         .size(8.dp)
+                        .background(color)
                 )
             }
         }
@@ -105,7 +98,7 @@ fun OnBoardingScreen(navController: NavController) {
 }
 
 @Composable
-fun OnBoardingPage(listOnBoarding: ListOnBoarding) {
+fun OnBoardingPager(listOnBoarding: ListOnBoarding) {
     Column(
         modifier = Modifier
             .wrapContentSize()
@@ -128,50 +121,13 @@ fun OnBoardingPage(listOnBoarding: ListOnBoarding) {
     }
 }
 
-@Composable
-fun Loader(navController: NavController) {
-    Box(
-        Modifier
-            .fillMaxSize()
-            .padding(26.dp)
-    ) {
-
-        Image(
-            painter = painterResource(id = R.drawable.skillcinema),
-            contentDescription = null,
-            modifier = Modifier
-                .wrapContentSize()
-                .padding(top = 18.dp)
-        )
-
-        CircularProgressIndicator(
-            modifier = Modifier
-                .width(36.dp)
-                .align(Alignment.Center),
-            color = Color(0xFF3D3BFF),
-            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-        )
-
-        Image(
-            painter = painterResource(id = R.drawable.onboarding_img1),
-            contentDescription = null,
-            Modifier.align(Alignment.BottomCenter)
-        )
-    }
-    LaunchedEffect(Unit) {
-        delay(2000)
-        navController.navigate("home_screen") {
-            popUpTo("loader_screen") { inclusive = true }
-        }
-    }
-}
 
 //@Composable
 //@Preview(showBackground = true)
 //fun FirstOnBoardingScreenPreview() {
-//    OnBoardingPage(listOnBoarding = listOnBoarding[0])
+//    OnBoardingPage(listOnBoarding[0])
 //}
-//
+
 //@Composable
 //@Preview(showBackground = true)
 //fun SecondOnBoardingScreenPreview() {

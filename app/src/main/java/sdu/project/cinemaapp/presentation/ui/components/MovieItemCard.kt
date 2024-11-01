@@ -1,34 +1,48 @@
-package sdu.project.cinemaapp.ui.home
+package sdu.project.cinemaapp.presentation.ui.components
 
-import androidx.compose.foundation.Image
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.skill_cinema.R
-import sdu.project.cinemaapp.data.CinemaItem
+import coil.compose.AsyncImage
+import sdu.project.cinemaapp.R
+import sdu.project.cinemaapp.domain.model.Movie
 
 @Composable
-fun CinemaItemCard(item: CinemaItem, onClick: (CinemaItem) -> Unit) {
+fun MovieItemCard(
+    movie: Movie,
+    onClick: (Movie) -> Unit
+) {
     Column(
         modifier = Modifier
             .padding(end = 8.dp)
-            .clickable { onClick(item) }
+            .clickable { onClick(movie) }
+            .wrapContentWidth()
+            .width(111.dp)
+            .height(194.dp)
     ) {
-        Box() {
-            Image(
-                painter = painterResource(id = R.drawable.intersleller),
+        Box{
+            AsyncImage(
+                model = movie.posterUrlPreview,
                 contentDescription = null,
                 modifier = Modifier
                     .height(150.dp)
@@ -47,7 +61,7 @@ fun CinemaItemCard(item: CinemaItem, onClick: (CinemaItem) -> Unit) {
             )
             {
                 Text(
-                    text = item.rating.toString(),
+                    text = movie.ratingKinopoisk.toString(),
                     style = TextStyle(
                         fontSize = 8.sp
                     ),
@@ -57,8 +71,10 @@ fun CinemaItemCard(item: CinemaItem, onClick: (CinemaItem) -> Unit) {
 
         }
         Text(
-            text = item.title,
-            modifier = Modifier.padding(top = 8.dp),
+            text = movie.nameRu,
+            modifier = Modifier.padding(top = 8.dp).width(100.dp),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
             style = TextStyle(
                 fontSize = 14.sp,
                 fontFamily = FontFamily(Font(R.font.graphikregular)),
@@ -66,7 +82,7 @@ fun CinemaItemCard(item: CinemaItem, onClick: (CinemaItem) -> Unit) {
             )
         )
         Text(
-            text = item.genre,
+            text = movie.genres.firstOrNull()?.genre ?: "No genre",
             modifier = Modifier.padding(top = 2.dp),
             style = TextStyle(
                 fontSize = 12.sp,
