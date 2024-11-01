@@ -24,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import sdu.project.cinemaapp.domain.model.Movie
 import sdu.project.cinemaapp.presentation.state.ScreenState
+import sdu.project.cinemaapp.presentation.viewModel.MovieDetailsViewModel
 
 @Composable
 fun MovieDetailsScreen(

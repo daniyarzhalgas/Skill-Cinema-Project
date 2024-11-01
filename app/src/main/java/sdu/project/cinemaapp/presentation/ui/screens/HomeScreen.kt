@@ -45,7 +45,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .verticalScroll(scrollState)
                     .padding(bottom = 70.dp),
-                verticalArrangement = Arrangement.spacedBy(30.dp)
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
 
                 Text(

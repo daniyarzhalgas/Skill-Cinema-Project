@@ -44,9 +44,7 @@ fun HomeLazyRowListComponent(
     onClick: (String) -> Unit
 ) {
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
+    Column{
         Row(
             modifier = Modifier
                 .fillMaxWidth()

@@ -51,7 +51,7 @@ fun OnBoardingScreen(onClick:()->Unit) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 5.dp),
+                .padding(top = 25.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
