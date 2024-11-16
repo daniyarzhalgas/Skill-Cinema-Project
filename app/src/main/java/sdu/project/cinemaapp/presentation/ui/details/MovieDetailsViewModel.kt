@@ -1,5 +1,7 @@
 package sdu.project.cinemaapp.presentation.ui.details
 
+import android.util.Log
+import androidx.collection.emptyObjectList
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,13 +22,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
-    private val moviesRepository: MoviesRepository
+    private val moviesRepository: MoviesRepository,
+    private val sharedViewModel: SharedViewModel
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ScreenState>(ScreenState.Initial)
     val state = _state.asStateFlow()
 
-    private val _movie = MutableStateFlow<List<Movie>>(emptyList())
+    private val _movie = MutableStateFlow<Movie?>(null)
     val movie = _movie.asStateFlow()
 
     private val _actors = MutableStateFlow<List<FilmStaff>>(emptyList())
@@ -44,12 +47,21 @@ class MovieDetailsViewModel @Inject constructor(
     private val _similarFilms = MutableStateFlow<List<SimilarMovie>>(emptyList())
     val similarFilms = _similarFilms.asStateFlow()
 
-    fun getMovieId(id: Int) {
+    init {
+        getMovie()
+        getActors()
+        getActor()
+        getStaff()
+        getImages()
+        getSimilarFilms()
+    }
+
+    private fun getMovie() {
         viewModelScope.launch {
             _state.value = ScreenState.Loading
             try {
-                val movie = moviesRepository.getMovieById(id)
-                _movie.value = listOf(movie)
+                val movie = sharedViewModel.selectedMovies.value[0]
+                _movie.value = movie
                 _state.value = ScreenState.Success
             } catch (e: Exception) {
                 _state.value = ScreenState.Error
@@ -57,11 +69,12 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    fun getActors(id: Int) {
+    private fun getActors() {
         viewModelScope.launch {
             _state.value = ScreenState.Loading
             try {
-                val actors = moviesRepository.getActors(id)
+                val filmId = sharedViewModel.selectedMovies.value[0].kinopoiskId
+                val actors = moviesRepository.getActors(filmId)
                 _actors.value = actors
                 _state.value = ScreenState.Success
             } catch (e: Exception) {
@@ -70,11 +83,12 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    fun getStaff(id: Int) {
+    private fun getStaff() {
         viewModelScope.launch {
             _state.value = ScreenState.Loading
             try {
-                val staff = moviesRepository.getStaff(id)
+                val filmId = sharedViewModel.selectedMovies.value[0].kinopoiskId
+                val staff = moviesRepository.getStaff(filmId)
                 _staff.value = staff
                 _state.value = ScreenState.Success
             }catch (e: Exception){
@@ -82,11 +96,12 @@ class MovieDetailsViewModel @Inject constructor(
             }            }
     }
 
-    fun getActor(id: Int){
+    private fun getActor(){
         viewModelScope.launch {
             _state.value = ScreenState.Loading
             try {
-                val actor = moviesRepository.getActor(id)
+                val filmId = sharedViewModel.selectedMovies.value[0].kinopoiskId
+                val actor = moviesRepository.getActor(filmId)
                 _actor.value = actor
                 _state.value = ScreenState.Success
             }catch (e: Exception){
@@ -94,11 +109,12 @@ class MovieDetailsViewModel @Inject constructor(
             }
         }
     }
-    fun getImages(id: Int) {
+    private fun getImages() {
         viewModelScope.launch {
             _state.value = ScreenState.Loading
             try {
-                val images = moviesRepository.getImages(id)
+                val filmId = sharedViewModel.selectedMovies.value[0].kinopoiskId
+                val images = moviesRepository.getImages(filmId)
                 _images.value = images
                 _state.value = ScreenState.Success
             } catch (e: Exception) {
@@ -107,11 +123,14 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    fun getSimilarFilms(id: Int){
+    private fun getSimilarFilms(){
         viewModelScope.launch {
             _state.value = ScreenState.Loading
             try {
-                val similarFilms = moviesRepository.getSimilarMovies(id)
+                val filmId = sharedViewModel.selectedMovies.value[0].kinopoiskId
+                val similarFilms = moviesRepository.getSimilarMovies(filmId)
+                Log.i("MovieDetailsViewModel", "Getting similar films $filmId")
+                Log.i("MovieDetailsViewModel", "Getting similar films $similarFilms")
                 _similarFilms.value = similarFilms
                 _state.value = ScreenState.Success
             } catch (e: Exception){

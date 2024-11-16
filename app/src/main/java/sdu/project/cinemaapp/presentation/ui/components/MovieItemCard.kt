@@ -1,5 +1,6 @@
 package sdu.project.cinemaapp.presentation.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -32,11 +33,14 @@ fun MovieItemCard(
     movie: Movie,
     onClick: (Movie) -> Unit,
 ) {
+    val sharedViewModel: SharedViewModel = hiltViewModel()
+
     Column(
         modifier = Modifier
             .padding(end = 8.dp)
             .clickable {
                 onClick(movie)
+                sharedViewModel.setMovie(movie)
             }
             .wrapContentWidth()
             .width(111.dp)

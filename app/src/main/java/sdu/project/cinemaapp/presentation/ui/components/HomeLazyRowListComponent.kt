@@ -43,7 +43,7 @@ import sdu.project.cinemaapp.presentation.viewModel.SharedViewModel
 fun HomeLazyRowListComponent(
     title: String,
     movies: List<Movie>,
-    onEvent: (event: HomeEvent) -> Unit
+    onEvent: (event: HomeEvent) -> Unit,
 ) {
 
     Column(

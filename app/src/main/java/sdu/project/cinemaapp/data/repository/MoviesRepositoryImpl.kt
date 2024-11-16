@@ -1,5 +1,6 @@
 package sdu.project.cinemaapp.data.repository
 
+import android.util.Log
 import sdu.project.cinemaapp.data.remote.MoviesApi
 import sdu.project.cinemaapp.domain.model.Actor
 import sdu.project.cinemaapp.domain.model.FilmStaff
@@ -29,6 +30,7 @@ class MoviesRepositoryImpl @Inject constructor(private val api: MoviesApi) : Mov
     }
 
     override suspend fun getStaff(id: Int): List<FilmStaff> {
+        Log.i("MoviesRepositoryImpl", "Getting Staff ${api.getStaff(id)}")
         return api.getStaff(id)
     }
 
@@ -41,6 +43,8 @@ class MoviesRepositoryImpl @Inject constructor(private val api: MoviesApi) : Mov
     }
 
     override suspend fun getSimilarMovies(id: Int): List<SimilarMovie> {
-        return api.getSimilarFilms(id).items
+        Log.i("MoviesRepositoryImpl", "Getting similar films")
+        Log.i("MoviesRepositoryImpl", "Getting similar films ${api.getSimilarMovies(id).items}")
+        return api.getSimilarMovies(id).items
     }
 }
