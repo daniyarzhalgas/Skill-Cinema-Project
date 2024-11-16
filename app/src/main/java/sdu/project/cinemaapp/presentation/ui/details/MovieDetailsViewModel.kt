@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -48,92 +49,32 @@ class MovieDetailsViewModel @Inject constructor(
     val similarFilms = _similarFilms.asStateFlow()
 
     init {
-        getMovie()
-        getActors()
-        getActor()
-        getStaff()
-        getImages()
-        getSimilarFilms()
+        fetchAllMovieDetails()
     }
 
-    private fun getMovie() {
+    private fun fetchAllMovieDetails() {
         viewModelScope.launch {
             _state.value = ScreenState.Loading
+
             try {
                 val movie = sharedViewModel.selectedMovies.value[0]
                 _movie.value = movie
+
+                val filmId = movie.kinopoiskId
+
+                val actorsDeferred = async { moviesRepository.getActors(filmId) }
+                val staffDeferred = async { moviesRepository.getStaff(filmId) }
+                val imagesDeferred = async { moviesRepository.getImages(filmId) }
+                val similarMoviesDeferred = async { moviesRepository.getSimilarMovies(filmId) }
+
+                _actors.value = actorsDeferred.await()
+                _staff.value = staffDeferred.await()
+                _images.value = imagesDeferred.await()
+                _similarFilms.value = similarMoviesDeferred.await()
+
                 _state.value = ScreenState.Success
             } catch (e: Exception) {
-                _state.value = ScreenState.Error
-            }
-        }
-    }
-
-    private fun getActors() {
-        viewModelScope.launch {
-            _state.value = ScreenState.Loading
-            try {
-                val filmId = sharedViewModel.selectedMovies.value[0].kinopoiskId
-                val actors = moviesRepository.getActors(filmId)
-                _actors.value = actors
-                _state.value = ScreenState.Success
-            } catch (e: Exception) {
-                _state.value = ScreenState.Error
-            }
-        }
-    }
-
-    private fun getStaff() {
-        viewModelScope.launch {
-            _state.value = ScreenState.Loading
-            try {
-                val filmId = sharedViewModel.selectedMovies.value[0].kinopoiskId
-                val staff = moviesRepository.getStaff(filmId)
-                _staff.value = staff
-                _state.value = ScreenState.Success
-            }catch (e: Exception){
-                _state.value = ScreenState.Error
-            }            }
-    }
-
-    private fun getActor(){
-        viewModelScope.launch {
-            _state.value = ScreenState.Loading
-            try {
-                val filmId = sharedViewModel.selectedMovies.value[0].kinopoiskId
-                val actor = moviesRepository.getActor(filmId)
-                _actor.value = actor
-                _state.value = ScreenState.Success
-            }catch (e: Exception){
-                _state.value = ScreenState.Error
-            }
-        }
-    }
-    private fun getImages() {
-        viewModelScope.launch {
-            _state.value = ScreenState.Loading
-            try {
-                val filmId = sharedViewModel.selectedMovies.value[0].kinopoiskId
-                val images = moviesRepository.getImages(filmId)
-                _images.value = images
-                _state.value = ScreenState.Success
-            } catch (e: Exception) {
-                _state.value = ScreenState.Error
-            }
-        }
-    }
-
-    private fun getSimilarFilms(){
-        viewModelScope.launch {
-            _state.value = ScreenState.Loading
-            try {
-                val filmId = sharedViewModel.selectedMovies.value[0].kinopoiskId
-                val similarFilms = moviesRepository.getSimilarMovies(filmId)
-                Log.i("MovieDetailsViewModel", "Getting similar films $filmId")
-                Log.i("MovieDetailsViewModel", "Getting similar films $similarFilms")
-                _similarFilms.value = similarFilms
-                _state.value = ScreenState.Success
-            } catch (e: Exception){
+                Log.e("MovieDetailsViewModel", "Failed to fetch movie details", e)
                 _state.value = ScreenState.Error
             }
         }

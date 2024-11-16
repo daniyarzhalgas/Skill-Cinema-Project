@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -44,70 +46,51 @@ class HomeViewModel @Inject constructor(
 
 
     init {
-        getPremieres()
-        getComicsCollections()
-        getPopularMovies()
+        fetchAllHomeData()
     }
 
-    fun event(navController:NavHostController,event: HomeEvent){
-        when(event){
+    fun event(navController: NavHostController, event: HomeEvent) {
+        when (event) {
             is HomeEvent.OnItemClick -> {
                 navController.navigate("details/${event.movie.kinopoiskId}") {
                     launchSingleTop = true
                 }
             }
+
             is HomeEvent.OnClick -> {
                 navController.navigate("list_screen/${event.string}")
             }
         }
     }
 
-    private fun getPremieres() {
+
+    private fun fetchAllHomeData() {
         viewModelScope.launch {
             _state.value = ScreenState.Loading
             try {
-                val movies = moviesRepository.getPremieres(currentMonth, currentYear, null)
-                if (movies.isNotEmpty()) {
-                    _premieres.value = movies
-                    _state.value = ScreenState.Success
-                }
-            } catch (e: Exception) {
-                Log.e("HomeViewModel", "Error loading premieres", e)
-                _state.value = ScreenState.Error
-            }
-        }
-    }
 
-    private fun getComicsCollections() {
-        viewModelScope.launch {
-            _state.value = ScreenState.Loading
-            try {
-                val movies = moviesRepository.getPopular("COMICS_THEME", null)
-                _comicsCollections.value = movies
-                _state.value = ScreenState.Success
-            } catch (e: Exception) {
-                Log.e("HomeViewModel", "Error loading comics", e)
-                _state.value = ScreenState.Error
-            }
-        }
-    }
+                val premieresDeferred = async { moviesRepository.getPremieres(currentMonth, currentYear, null) }
+                val comicsCollectionsDeferred = async { moviesRepository.getPopular("COMICS_THEME", null) }
+                val popularMoviesDeferred = async { moviesRepository.getPopular("TOP_POPULAR_MOVIES", null) }
 
-    private fun getPopularMovies(){
-        viewModelScope.launch {
-            try {
-                val movies = moviesRepository.getPopular("TOP_POPULAR_MOVIES", null)
-                _popularMovies.value = movies
+                _premieres.value = premieresDeferred.await()
+                _comicsCollections.value = comicsCollectionsDeferred.await()
+                _popularMovies.value = popularMoviesDeferred.await()
+
                 _state.value = ScreenState.Success
-            }catch (e: Exception){
-                Log.e("HomeViewModel", "Error loading popular movies", e)
+
+            } catch (e: Exception) {
                 _state.value = ScreenState.Error
             }
         }
     }
 }
 
-/*TODO handle the possible exceptions
-   The URL or URI used in the API is incorrect.
-   The server is unavailable, and the app could not connect to it.
-   A network latency issue.
-   Poor or no internet connection on the device. */
+/*
+TODO
+ handle the possible exceptions :
+    1) The URL or URI used in the API is incorrect.
+    2) The server is unavailable, and the app could not connect to it.
+    3) A network latency issue.
+    4) Poor or no internet connection on the device.
+*/
