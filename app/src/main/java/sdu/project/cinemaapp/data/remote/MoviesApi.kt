@@ -1,10 +1,16 @@
 package sdu.project.cinemaapp.data.remote
 
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.Path
 import retrofit2.http.Query
+import sdu.project.cinemaapp.data.DTO.ImageListDto
 import sdu.project.cinemaapp.data.DTO.MovieListDto
+import sdu.project.cinemaapp.data.DTO.SimilarMoviesDto
+import sdu.project.cinemaapp.domain.model.Actor
+import sdu.project.cinemaapp.domain.model.FilmStaff
+import sdu.project.cinemaapp.domain.model.Image
 import sdu.project.cinemaapp.domain.model.Movie
 import sdu.project.cinemaapp.utills.constant.Constant.API_KEY
 
@@ -30,6 +36,28 @@ interface MoviesApi {
         @Path("id") id: Int
     ): Movie
 
+    @Headers("X-API-KEY: $API_KEY")
+    @GET("/api/v1/staff")
+    suspend fun getStaff(
+        @Query("filmId") filmId: Int
+    ): List<FilmStaff>
 
+    @Headers("X-API-KEY: $API_KEY")
+    @GET("/api/v1/staff")
+    suspend fun getActor(
+            @Query("id") actorId: Int
+    ):Actor
 
+    @Headers("X-API-KEY: $API_KEY")
+    @GET("/api/v2.2/films/{id}/images")
+    suspend fun getImages(
+        @Query("id") filmId: Int,
+        @Query("page") page: Int?
+    ):ImageListDto
+
+    @Headers("X-API-KEY: $API_KEY")
+    @GET("/api/v2.2/films/{id}/similars")
+    suspend fun getSimilarFilms(
+        @Query("id") filmId: Int
+    ): SimilarMoviesDto
 }

@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import sdu.project.cinemaapp.data.remote.MoviesApi
+import sdu.project.cinemaapp.presentation.viewModel.SharedViewModel
 import sdu.project.cinemaapp.utills.constant.Constant.BASE_URL
 import javax.inject.Singleton
 
@@ -23,4 +24,7 @@ object AppModule {
             .build()
             .create(MoviesApi::class.java)
     }
+    @Provides
+    @Singleton
+    fun provideSharedViewModel() = SharedViewModel()
 }

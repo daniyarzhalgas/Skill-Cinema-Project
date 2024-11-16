@@ -1,6 +1,7 @@
-package sdu.project.cinemaapp.presentation.ui.screens
+package sdu.project.cinemaapp.presentation.ui.movieList
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,14 +12,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,37 +27,37 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import sdu.project.cinemaapp.R
 import sdu.project.cinemaapp.domain.model.Movie
 import sdu.project.cinemaapp.presentation.state.ScreenState
 import sdu.project.cinemaapp.presentation.ui.components.MovieItemCard
-import sdu.project.cinemaapp.presentation.viewModel.MovieViewModel
+import sdu.project.cinemaapp.presentation.ui.screens.ErrorScreen
+import sdu.project.cinemaapp.presentation.ui.screens.LoaderScreen
 
-@SuppressLint("UnrememberedMutableState")
+@SuppressLint("UnrememberedMutableState", "StateFlowValueCalledInComposition")
 @Composable
 fun ListMoviesScreen(
     title: String,
-    viewModel: MovieViewModel,
-    onItemClick: (Movie) -> Unit,
-    onClick: () -> Unit
+    navController: NavController,
+    viewModel: ListMoviesViewModel = hiltViewModel(),
 ) {
-    val state = viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val movies by viewModel.movies.collectAsStateWithLifecycle()
 
-    when (state.value) {
+    when (state) {
         is ScreenState.Initial -> {}
         is ScreenState.Loading -> LoaderScreen()
         is ScreenState.Error -> ErrorScreen()
         is ScreenState.Success -> {
-            val movies by when (title) {
-                "Премьеры" -> viewModel.premieres.collectAsStateWithLifecycle()
-                "Комиксы" -> viewModel.comicsCollections.collectAsStateWithLifecycle()
-                "Популярные фильмы" -> viewModel.popularMovies.collectAsStateWithLifecycle()
-                else -> mutableStateOf(emptyList())
+            ListMoviesLayout(title, movies) {
+                viewModel.event(navController, it)
             }
-            ListMoviesLayout(title, movies, onItemClick, onClick)
         }
     }
+
 }
 
 
@@ -68,9 +65,9 @@ fun ListMoviesScreen(
 fun ListMoviesLayout(
     title: String,
     movies: List<Movie>,
-    onItemClick: (Movie) -> Unit,
-    onClick: () -> Unit
+    onEvent: (event: ListMoviesEvent) -> Unit
 ) {
+    Log.d("ListMoviesLayout", "Movies: $movies")
     Column(
         modifier = Modifier
             .padding(26.dp)
@@ -80,7 +77,7 @@ fun ListMoviesLayout(
         Box(modifier = Modifier.fillMaxWidth()) {
 
             IconButton(
-                onClick = { onClick() },
+                onClick = { onEvent(ListMoviesEvent.OnBackClick) },
                 modifier = Modifier.align(Alignment.CenterStart)
             ) {
                 Image(
@@ -104,11 +101,12 @@ fun ListMoviesLayout(
         }
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            modifier = Modifier.padding(bottom = 30.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(movies) { movie ->
-                MovieItemCard(movie, onClick = onItemClick)
+                MovieItemCard(movie) {
+                    onEvent(ListMoviesEvent.OnItemClick(movie))
+                }
             }
         }
     }

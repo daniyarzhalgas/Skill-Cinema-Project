@@ -1,9 +1,10 @@
-package sdu.project.cinemaapp.presentation.ui.navigation
+package sdu.project.cinemaapp.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import sdu.project.cinemaapp.presentation.ui.navigation.MainNavGraph
 import sdu.project.cinemaapp.presentation.ui.screens.MainScreen
 import sdu.project.cinemaapp.presentation.ui.screens.OnBoardingScreen
 

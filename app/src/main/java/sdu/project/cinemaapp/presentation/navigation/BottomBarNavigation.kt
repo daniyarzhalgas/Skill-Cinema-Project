@@ -1,4 +1,4 @@
-package sdu.project.cinemaapp.presentation.ui.navigation
+package sdu.project.cinemaapp.presentation.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home

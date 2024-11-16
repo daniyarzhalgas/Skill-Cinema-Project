@@ -1,8 +1,6 @@
 package sdu.project.cinemaapp.presentation.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,19 +21,23 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import sdu.project.cinemaapp.R
 import sdu.project.cinemaapp.domain.model.Movie
+import sdu.project.cinemaapp.presentation.viewModel.SharedViewModel
 
 @Composable
 fun MovieItemCard(
     movie: Movie,
-    onClick: (Movie) -> Unit
+    onClick: (Movie) -> Unit,
 ) {
     Column(
         modifier = Modifier
             .padding(end = 8.dp)
-            .clickable { onClick(movie) }
+            .clickable {
+                onClick(movie)
+            }
             .wrapContentWidth()
             .width(111.dp)
             .height(194.dp)

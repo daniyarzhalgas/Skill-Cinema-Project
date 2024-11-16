@@ -1,8 +1,9 @@
-package sdu.project.cinemaapp.presentation.viewModel
+package sdu.project.cinemaapp.presentation.ui.home
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +17,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
-class MovieViewModel @Inject constructor(
+class HomeViewModel @Inject constructor(
     private val moviesRepository: MoviesRepository
 ) : ViewModel() {
 
@@ -41,12 +42,25 @@ class MovieViewModel @Inject constructor(
     private val _popularMovies = MutableStateFlow<List<Movie>>(emptyList())
     val popularMovies = _popularMovies.asStateFlow()
 
+
     init {
         getPremieres()
         getComicsCollections()
         getPopularMovies()
     }
 
+    fun event(navController:NavHostController,event: HomeEvent){
+        when(event){
+            is HomeEvent.OnItemClick -> {
+                navController.navigate("details/${event.movie.kinopoiskId}") {
+                    launchSingleTop = true
+                }
+            }
+            is HomeEvent.OnClick -> {
+                navController.navigate("list_screen/${event.string}")
+            }
+        }
+    }
 
     private fun getPremieres() {
         viewModelScope.launch {
@@ -91,3 +105,9 @@ class MovieViewModel @Inject constructor(
         }
     }
 }
+
+/*TODO handle the possible exceptions
+   The URL or URI used in the API is incorrect.
+   The server is unavailable, and the app could not connect to it.
+   A network latency issue.
+   Poor or no internet connection on the device. */

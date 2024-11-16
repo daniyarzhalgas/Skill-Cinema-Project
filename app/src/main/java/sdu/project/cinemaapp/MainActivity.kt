@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import sdu.project.cinemaapp.presentation.ui.navigation.OnboardingNavGraph
+import sdu.project.cinemaapp.presentation.navigation.OnboardingNavGraph
 
 
 @AndroidEntryPoint

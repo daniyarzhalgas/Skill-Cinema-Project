@@ -31,20 +31,24 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 
 import sdu.project.cinemaapp.R
 import sdu.project.cinemaapp.domain.model.Movie
+import sdu.project.cinemaapp.presentation.ui.home.HomeEvent
+import sdu.project.cinemaapp.presentation.viewModel.SharedViewModel
 
 
 @Composable
 fun HomeLazyRowListComponent(
     title: String,
     movies: List<Movie>,
-    onItemClick: (Movie) -> Unit,
-    onClick: (String) -> Unit
+    onEvent: (event: HomeEvent) -> Unit
 ) {
 
-    Column{
+    Column(
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -59,7 +63,7 @@ fun HomeLazyRowListComponent(
                     fontFamily = FontFamily(Font(R.font.graphiksemibold))
                 )
             )
-            TextButton(onClick = { onClick(title) }, Modifier.background(Color.White)) {
+            TextButton(onClick = { onEvent(HomeEvent.OnClick(title)) }, Modifier.background(Color.White)) {
                 Text(
                     text = "Все", modifier = Modifier.padding(end = 26.dp),
                     style = TextStyle(
@@ -76,7 +80,9 @@ fun HomeLazyRowListComponent(
                 Spacer(Modifier.width(30.dp))
             }
             items(movies.take(10)) { movie ->
-                MovieItemCard(movie, onClick = onItemClick)
+                MovieItemCard(movie){
+                    onEvent(HomeEvent.OnItemClick(movie))
+                }
             }
             item {
                 Column(
@@ -88,7 +94,7 @@ fun HomeLazyRowListComponent(
                 ) {
 
                     Button(
-                        onClick = {onClick(title)} ,
+                        onClick = {onEvent(HomeEvent.OnClick(title))} ,
                         modifier = Modifier
                             .size(50.dp),
                         colors = ButtonDefaults.buttonColors(
@@ -108,7 +114,7 @@ fun HomeLazyRowListComponent(
                             )
                         }
                     }
-                    TextButton(onClick = {onClick(title)}){
+                    TextButton(onClick = {onEvent(HomeEvent.OnClick(title))}){
                         Text(text = "Показать все")
                     }
 
