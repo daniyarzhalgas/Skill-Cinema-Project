@@ -64,8 +64,12 @@ fun MainNavGraph(
                 ProfileScreen()
             }
         }
-        composable("actor_details") {
-            ActorScreen(navController)
+        composable("actor_details/{id}") { backStackEntry ->
+            val actorId = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+
+            actorId?.let{
+                ActorScreen(navController, actorId)
+            }
         }
     }
 }

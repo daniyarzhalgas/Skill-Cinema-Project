@@ -25,6 +25,7 @@ class ActorViewModel @Inject constructor(
 
     fun event(navController: NavHostController, event: ActorEvent){
         when(event){
+            is ActorEvent.LoadActor -> fetchActorData(event.actorId)
             is ActorEvent.OnBackClick -> {
                 navController.popBackStack()
             }
