@@ -63,6 +63,9 @@ class MovieDetailsViewModel @Inject constructor(
             is MovieDetailsEvent.OnBackClick -> {
                 navController.popBackStack()
             }
+            is MovieDetailsEvent.LoadGallery -> {
+                navController.navigate("gallery_screen")
+            }
         }
     }
 

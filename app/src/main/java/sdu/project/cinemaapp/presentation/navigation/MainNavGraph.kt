@@ -14,6 +14,9 @@ import sdu.project.cinemaapp.presentation.ui.screens.ProfileScreen
 import sdu.project.cinemaapp.presentation.ui.screens.SearchScreen
 import sdu.project.cinemaapp.presentation.ui.home.HomeScreen
 import sdu.project.cinemaapp.presentation.ui.details.MovieDetailsScreen
+import sdu.project.cinemaapp.presentation.ui.filmography.FilmographyEvent
+import sdu.project.cinemaapp.presentation.ui.filmography.FilmographyScreen
+import sdu.project.cinemaapp.presentation.ui.galleryPage.GalleryScreen
 import sdu.project.cinemaapp.presentation.ui.movieList.ListMoviesScreen
 
 
@@ -71,6 +74,17 @@ fun MainNavGraph(
                 Log.i("ActorId", "ActorId: $actorId")
                 ActorScreen(navController, actorId)
             }
+        }
+        composable("filmography/{id}") { backStackEntry ->
+            val actorId = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+
+            actorId?.let{
+                Log.i("FilmographyScreen", "ActorId: $actorId")
+                FilmographyScreen(navController, actorId)
+            }
+        }
+        composable("gallery_screen") {
+            GalleryScreen(navController)
         }
     }
 }

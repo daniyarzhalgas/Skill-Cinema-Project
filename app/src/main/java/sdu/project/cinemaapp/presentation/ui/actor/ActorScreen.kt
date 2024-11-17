@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,7 +36,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import sdu.project.cinemaapp.R
 import sdu.project.cinemaapp.domain.model.Actor
-import sdu.project.cinemaapp.domain.model.ActorsMovie
+import sdu.project.cinemaapp.domain.model.Movie
 import sdu.project.cinemaapp.presentation.state.ScreenState
 import sdu.project.cinemaapp.presentation.ui.screens.ErrorScreen
 import sdu.project.cinemaapp.presentation.ui.screens.LoaderScreen
@@ -56,6 +55,7 @@ fun ActorScreen(
     }
 
     val actor by viewModel.actor.collectAsStateWithLifecycle()
+    val movies by viewModel.movies.collectAsStateWithLifecycle()
 
     when (state) {
         is ScreenState.Initial -> {}
@@ -64,8 +64,7 @@ fun ActorScreen(
         is ScreenState.Success -> {
             actor?.let {
                 Log.i("ActorScreen", "Getting Actor: $actor")
-                ActorContent(actor)
-//                TextButton(onClick = {viewModel.event(navController,   ActorEvent.OnBackClick)}) {}
+                ActorContent(actor!!, movies, navController)
             }
         }
     }
@@ -74,151 +73,151 @@ fun ActorScreen(
 
 @Composable
 fun ActorContent(
-    actor: Actor?,
+    actor: Actor,
+    movies: List<Movie>,
+    navController: NavHostController,
+    viewModel: ActorViewModel = hiltViewModel()
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 26.dp, vertical = 20.dp)
     ) {
-        if (actor != null) {
-            Image(
-                painter = painterResource(id = R.drawable.caret_left), contentDescription = "",
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .padding(top = 10.dp, bottom = 10.dp)
-                    .size(30.dp)
-                    .clickable {
-                        //todo
-                    }
-            )
-            Row(
-                modifier = Modifier,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                AsyncImage(
-                    model = actor.posterUrl, contentDescription = "",
-                    modifier = Modifier
-                        .height(201.dp)
-                        .width(146.dp)
-                )
-                Column {
-                    Text(
-                        text = actor.nameRu,
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            fontFamily = FontFamily(Font(R.font.graphiksemibold)),
-                            color = Color(0xFF272727),
-                        )
-                    )
 
-                    Text(
-                        text = actor.profession,
-                        style = TextStyle(
-                            fontSize = 12.sp,
-                            lineHeight = 14.sp,
-                            fontFamily = FontFamily(Font(R.font.graphikregular)),
-                            color = Color(0xFF838390),
-                        )
-                    )
-
-
+        Image(
+            painter = painterResource(id = R.drawable.caret_left), contentDescription = "",
+            modifier = Modifier
+                .align(Alignment.Start)
+                .padding(top = 10.dp, bottom = 10.dp)
+                .size(30.dp)
+                .clickable {
+                    viewModel.event(navController, ActorEvent.OnBackClick)
                 }
-            }
-            Spacer(modifier = Modifier.height(40.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+        )
+        Row(
+            modifier = Modifier,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            AsyncImage(
+                model = actor.posterUrl, contentDescription = "",
+                modifier = Modifier
+                    .height(201.dp)
+                    .width(146.dp)
+            )
+            Column {
                 Text(
-                    text = "Лучшее",
+                    text = actor.nameRu,
                     style = TextStyle(
-                        fontSize = 18.sp,
+                        fontSize = 16.sp,
                         fontFamily = FontFamily(Font(R.font.graphiksemibold)),
                         color = Color(0xFF272727),
                     )
                 )
 
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable {
-                        //todo
-                    }) {
-                    Text(
-                        text = "Все",
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            fontFamily = FontFamily(Font(R.font.graphikmedium)),
-                            color = Color(0xFF3D3BFF),
-                            textAlign = TextAlign.Center,
-                        )
-                    )
-                    Image(
-                        painter = painterResource(R.drawable.caret_right),
-                        contentDescription = ""
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(24.dp))
-
-
-            ActorFilms(actor.films)
-
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
                 Text(
-                    text = "Фильмография",
+                    text = actor.profession,
                     style = TextStyle(
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily(Font(R.font.graphikbold)),
-                        color = Color(0xFF272727),
+                        fontSize = 12.sp,
+                        lineHeight = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.graphikregular)),
+                        color = Color(0xFF838390),
                     )
                 )
-
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable {
-                        //todo
-                    }) {
-                    Text(
-                        text = "К списку",
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            fontFamily = FontFamily(Font(R.font.graphikmedium)),
-                            color = Color(0xFF3D3BFF),
-                            textAlign = TextAlign.Center,
-                        )
-                    )
-                    Image(
-                        painter = painterResource(R.drawable.caret_right),
-                        contentDescription = ""
-                    )
-                }
-
             }
-            Spacer(modifier = Modifier.height(8.dp))
+        }
+        Spacer(modifier = Modifier.height(40.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
-                text = actor.films.size.toString() + " фильма",
+                text = "Лучшее",
                 style = TextStyle(
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily(Font(R.font.graphikregular)),
-                    color = Color(0xFF838391),
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily(Font(R.font.graphiksemibold)),
+                    color = Color(0xFF272727),
                 )
             )
+
+            Row(verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable {
+                    //todo
+                }) {
+                Text(
+                    text = "Все",
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.graphikmedium)),
+                        color = Color(0xFF3D3BFF),
+                        textAlign = TextAlign.Center,
+                    )
+                )
+                Image(
+                    painter = painterResource(R.drawable.caret_right),
+                    contentDescription = ""
+                )
+            }
         }
+        Spacer(modifier = Modifier.height(24.dp))
+
+
+        ActorFilms(movies)
+
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Фильмография",
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontFamily = FontFamily(Font(R.font.graphikbold)),
+                    color = Color(0xFF272727),
+                )
+            )
+
+            Row(verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable {
+                    //todo
+                }) {
+                Text(
+                    text = "К списку",
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.graphikmedium)),
+                        color = Color(0xFF3D3BFF),
+                        textAlign = TextAlign.Center,
+                    )
+                )
+                Image(
+                    painter = painterResource(R.drawable.caret_right),
+                    contentDescription = ""
+                )
+            }
+
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = actor.films.size.toString() + " фильма",
+            style = TextStyle(
+                fontSize = 12.sp,
+                fontFamily = FontFamily(Font(R.font.graphikregular)),
+                color = Color(0xFF838391),
+            )
+        )
     }
 }
 
 
 @Composable
-fun ActorFilms(movies: List<ActorsMovie>) {
+fun ActorFilms(movies: List<Movie>) {
     LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        items(movies) {
+        items(movies.take(10)) {
             FilmItem(it)
         }
     }
@@ -226,13 +225,14 @@ fun ActorFilms(movies: List<ActorsMovie>) {
 
 
 @Composable
-fun FilmItem(movie: ActorsMovie) {
+fun FilmItem(movie: Movie) {
     Column(
         modifier = Modifier.width(111.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Image(
-            painter = painterResource(R.drawable.venom_poster), contentDescription = "",
+        AsyncImage(
+            model = movie.posterUrlPreview,
+            contentDescription = "",
             modifier = Modifier
                 .width(111.dp)
                 .height(156.dp),
@@ -248,7 +248,7 @@ fun FilmItem(movie: ActorsMovie) {
                 )
             )
             Text(
-                text = movie.professionKey,
+                text = movie.genres.firstOrNull()?.genre ?: "no genre",
                 style = TextStyle(
                     fontSize = 12.sp,
                     fontFamily = FontFamily(Font(R.font.graphikregular)),

@@ -45,7 +45,8 @@ data class Movie(
     val endYear: Int,
     val serial: Boolean,
     val shortFilm: Boolean,
-    val completed: Boolean
+    val completed: Boolean,
+    val professionKey: String?
 )
 
 

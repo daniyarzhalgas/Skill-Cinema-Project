@@ -109,7 +109,7 @@ fun MovieContent(
     navController: NavHostController,
     viewModel: MovieDetailsViewModel
 ) {
-
+    val sharedViewModel: SharedViewModel = hiltViewModel()
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
@@ -201,23 +201,35 @@ fun MovieContent(
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(14.dp))
-                Header("В фильме снимались", actors.size)
+                Header("В фильме снимались", actors.size){
+                    sharedViewModel.setData(actors)
+                    navController.navigate("actors_screen")
+                }
                 Spacer(modifier = Modifier.height(14.dp))
                 StaffListView(staffs = actors, 4){
                     viewModel.event(navController, it)
                 }
                 Spacer(modifier = Modifier.height(14.dp))
-                Header("Над фильмом работали", staff.size)
+                Header("Над фильмом работали", staff.size){
+                    sharedViewModel.setData(staff)
+                    navController.navigate("staff_screen")
+                }
                 Spacer(modifier = Modifier.height(14.dp))
                 StaffListView(staffs = staff, countItem = 2){
                     viewModel.event(navController, it)
                 }
                 Spacer(modifier = Modifier.height(14.dp))
-                Header("Галерея",images.size)
+                Header("Галерея",images.size){
+                    sharedViewModel.setData(images)
+                    navController.navigate("gallery_screen")
+                }
                 Spacer(modifier = Modifier.height(14.dp))
                 ListImages(images = images)
                 Spacer(modifier = Modifier.height(14.dp))
-                Header("Похожие фильмы", similarFilms.size)
+                Header("Похожие фильмы", similarFilms.size){
+                    sharedViewModel.setData(similarFilms)
+                    navController.navigate("similar_movies_screen")
+                }
                 Spacer(modifier = Modifier.height(14.dp))
                 SimilarMoviesList(similarFilms){
                     viewModel.event(navController, it)
@@ -229,7 +241,7 @@ fun MovieContent(
 }
 
 @Composable
-fun Header(headerText: String, size: Int) {
+fun Header(headerText: String, size: Int, onClick: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -245,7 +257,7 @@ fun Header(headerText: String, size: Int) {
         )
         Row(verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.clickable {
-                //todo переход на экран актеров
+                onClick()
             }) {
             Text(
                 text = size.toString(),

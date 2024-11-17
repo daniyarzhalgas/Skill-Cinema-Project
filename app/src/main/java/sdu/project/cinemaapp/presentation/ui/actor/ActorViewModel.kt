@@ -5,10 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import sdu.project.cinemaapp.domain.model.Actor
+import sdu.project.cinemaapp.domain.model.Movie
 import sdu.project.cinemaapp.domain.repository.MoviesRepository
 import sdu.project.cinemaapp.presentation.state.ScreenState
 import javax.inject.Inject
@@ -34,8 +37,11 @@ class ActorViewModel @Inject constructor(
     private val _actor = MutableStateFlow<Actor?>(null)
     val actor = _actor.asStateFlow()
 
-    fun event(navController: NavHostController, event: ActorEvent){
-        when(event){
+    private val _movies = MutableStateFlow<List<Movie>>(emptyList())
+    val movies = _movies.asStateFlow()
+
+    fun event(navController: NavHostController, event: ActorEvent) {
+        when (event) {
             is ActorEvent.LoadActor -> fetchActorData(event.actorId)
             is ActorEvent.OnBackClick -> {
                 navController.popBackStack()
@@ -48,9 +54,18 @@ class ActorViewModel @Inject constructor(
         viewModelScope.launch {
             _state.value = ScreenState.Loading
             try {
-                val actor = moviesRepository.getActor(id)
-                Log.i("ActorViewModel", "Actor: $actor")
+                val actorDeferred = async { moviesRepository.getActor(id) }
+                val actor = actorDeferred.await()
+
+                val movies = actor.films
+                    .take(10)
+                    .map { film ->
+                        async { moviesRepository.getMovieById(film.filmId) }
+                    }.awaitAll()
+
                 _actor.value = actor
+                _movies.value = movies
+                Log.i("ActorViewModel", "Movies: ${_movies.value}")
                 _state.value = ScreenState.Success
             } catch (e: Exception) {
                 Log.e("ActorViewModel", "Error: $e")

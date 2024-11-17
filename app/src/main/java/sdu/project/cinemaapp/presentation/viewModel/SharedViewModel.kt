@@ -17,16 +17,19 @@ class SharedViewModel @Inject constructor() : ViewModel() {
     private val _selectedActorId = MutableStateFlow<Int?>(null)
     val selectedActorId = _selectedActorId.asStateFlow()
 
-    private val _selectedGalleryImage = MutableStateFlow<Image?>(null)
-    val selectedGalleryImage = _selectedGalleryImage.asStateFlow()
+    private val _selectedData = MutableStateFlow<List<Any>>(emptyList())
+    val selectedData = _selectedData.asStateFlow()
 
     fun setMovies(movies: List<Movie>) {
         _selectedMovies.update { movies }
     }
 
+    fun setData(anyData: List<Any>) {
+        _selectedData.value = anyData
+    }
 
-    fun setGalleryImage(image: Image){
-        _selectedGalleryImage.update {  image } ;
+    inline fun <reified T> getDataOfType(): List<T> {
+        return selectedData.value.filterIsInstance<T>()
     }
 
 }
