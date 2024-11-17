@@ -43,10 +43,13 @@ class FilmographyViewModel @Inject constructor(
             is FilmographyEvent.LoadMovieByProfessionKey -> {
                 loadMoviesByProfessionKey(event.professionKey)
             }
+            is FilmographyEvent.OnMovieClick -> {
+                navController.navigate("details/${event.movieId}")
+            }
         }
     }
 
-    fun loadMoviesByProfessionKey(professionKey: String) {
+    private fun loadMoviesByProfessionKey(professionKey: String) {
         _state.value = ScreenState.Loading
         viewModelScope.launch {
             try {
