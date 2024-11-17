@@ -44,6 +44,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import sdu.project.cinemaapp.R
+import sdu.project.cinemaapp.data.local.MockData
 import sdu.project.cinemaapp.domain.model.FilmStaff
 import sdu.project.cinemaapp.domain.model.MovieImage
 import sdu.project.cinemaapp.domain.model.Movie
@@ -181,8 +182,8 @@ fun MovieContent(
                         )
                     )
                     Spacer(modifier = Modifier.height(14.dp))
-                    val hour = (movie.filmLength / 60).toString() + " ч";
-                    val minute = (movie.filmLength % 60).toString() + " мин";
+                    val hour = (movie.filmLength / 60).toString() + " ч"
+                    val minute = (movie.filmLength % 60).toString() + " мин"
                     Text(
                         text = movie.countries.joinToString(", ") { it.country } + ", " + hour + " " + minute + "," + movie.ratingAgeLimits.substring(
                             3
@@ -247,8 +248,8 @@ fun MovieContent(
             Column(modifier = Modifier.padding(25.dp)) {
                 Text(
                     text = movie.shortDescription
-                        ?: "Чукотский парень влюбляется \u2028в американскую вебкам-модель. Приз Венеции, Кристина Асмус \u2028в роли девушки мечты",
-                    style = TextStyle(
+                        ?: MockData.shortDescription,
+                        style = TextStyle(
                         fontSize = 20.sp,
                         lineHeight = 22.sp,
                         fontFamily = FontFamily(Font(R.font.graphikbold)),
@@ -258,8 +259,8 @@ fun MovieContent(
                 Spacer(modifier = Modifier.height(14.dp))
                 Text(
                     text = movie.description
-                        ?: "Все меняется в жизни юного чукотского охотника Лёшки \u2028с появлением в поселке интернета. Он влюбляется — впервые и сильно — \u2028в молчаливую девушку...",
-                    style = TextStyle(
+                        ?: MockData.description,
+                        style = TextStyle(
                         fontSize = 17.sp,
                         lineHeight = 22.sp,
                         fontFamily = FontFamily(Font(R.font.graphikregular)),
@@ -270,8 +271,8 @@ fun MovieContent(
                 )
                 Spacer(modifier = Modifier.height(14.dp))
                 Header("В фильме снимались", actors.size) {
-                    sharedViewModel.setData(actors)
-                    navController.navigate("actors_screen")
+                    sharedViewModel.setDataList(actors)
+                    navController.navigate("list_screen/{title}")
                 }
                 Spacer(modifier = Modifier.height(14.dp))
                 StaffListView(staffs = actors, 4) {
@@ -279,8 +280,8 @@ fun MovieContent(
                 }
                 Spacer(modifier = Modifier.height(14.dp))
                 Header("Над фильмом работали", staff.size) {
-                    sharedViewModel.setData(staff)
-                    navController.navigate("staff_screen")
+                    sharedViewModel.setDataList(staff)
+                    navController.navigate("list_screen/{title}")
                 }
                 Spacer(modifier = Modifier.height(14.dp))
                 StaffListView(staffs = staff, countItem = 2) {
@@ -288,15 +289,15 @@ fun MovieContent(
                 }
                 Spacer(modifier = Modifier.height(14.dp))
                 Header("Галерея", images.size) {
-                    sharedViewModel.setData(images)
+                    sharedViewModel.setDataList(images)
                     navController.navigate("gallery_screen")
                 }
                 Spacer(modifier = Modifier.height(14.dp))
                 ListImages(images = images)
                 Spacer(modifier = Modifier.height(14.dp))
                 Header("Похожие фильмы", similarFilms.size) {
-                    sharedViewModel.setData(similarFilms)
-                    navController.navigate("similar_movies_screen")
+                    sharedViewModel.setDataList(similarFilms)
+                    navController.navigate("list_screen/{title}")
                 }
                 Spacer(modifier = Modifier.height(14.dp))
                 SimilarMoviesList(similarFilms) {
@@ -309,7 +310,7 @@ fun MovieContent(
 }
 
 @Composable
-fun Header(headerText: String, size: Int, onClick: () -> Unit) {
+fun Header(headerText: String, size: Int, onClick: (String) -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -325,7 +326,7 @@ fun Header(headerText: String, size: Int, onClick: () -> Unit) {
         )
         Row(verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.clickable {
-                onClick()
+                onClick(headerText)
             }) {
             Text(
                 text = size.toString(),
@@ -483,3 +484,5 @@ fun StaffItem(staff: FilmStaff, onClick: (Int) -> Unit) {
         }
     }
 }
+
+//todo fix the Header navigation

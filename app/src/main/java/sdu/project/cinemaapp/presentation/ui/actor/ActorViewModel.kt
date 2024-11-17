@@ -46,6 +46,9 @@ class ActorViewModel @Inject constructor(
             is ActorEvent.OnBackClick -> {
                 navController.popBackStack()
             }
+            is ActorEvent.OnFilmographyClick -> {
+                navController.navigate("filmography")
+            }
         }
     }
 

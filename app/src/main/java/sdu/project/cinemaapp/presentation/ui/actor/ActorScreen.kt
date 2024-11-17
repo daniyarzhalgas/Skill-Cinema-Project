@@ -40,6 +40,7 @@ import sdu.project.cinemaapp.domain.model.Movie
 import sdu.project.cinemaapp.presentation.state.ScreenState
 import sdu.project.cinemaapp.presentation.ui.screens.ErrorScreen
 import sdu.project.cinemaapp.presentation.ui.screens.LoaderScreen
+import sdu.project.cinemaapp.presentation.viewModel.SharedViewModel
 
 @Composable
 fun ActorScreen(
@@ -64,7 +65,9 @@ fun ActorScreen(
         is ScreenState.Success -> {
             actor?.let {
                 Log.i("ActorScreen", "Getting Actor: $actor")
-                ActorContent(actor!!, movies, navController)
+                ActorContent(actor!!, movies, navController, viewModel){
+                   viewModel.event(navController, ActorEvent.OnFilmographyClick)
+                }
             }
         }
     }
@@ -76,8 +79,11 @@ fun ActorContent(
     actor: Actor,
     movies: List<Movie>,
     navController: NavHostController,
-    viewModel: ActorViewModel = hiltViewModel()
+    viewModel: ActorViewModel,
+    onClick: () -> Unit
 ) {
+    val sharedViewModel : SharedViewModel = hiltViewModel()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -183,7 +189,9 @@ fun ActorContent(
 
             Row(verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.clickable {
-                    //todo
+                    sharedViewModel.setData(actor)
+                    sharedViewModel.setMovies(movies)
+                    onClick()
                 }) {
                 Text(
                     text = "К списку",

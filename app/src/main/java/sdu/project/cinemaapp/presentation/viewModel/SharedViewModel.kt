@@ -1,6 +1,5 @@
 package sdu.project.cinemaapp.presentation.viewModel
 
-import android.media.Image
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,22 +13,31 @@ class SharedViewModel @Inject constructor() : ViewModel() {
 
     private val _selectedMovies = MutableStateFlow<List<Movie>>(emptyList())
     val selectedMovies = _selectedMovies.asStateFlow()
-    private val _selectedActorId = MutableStateFlow<Int?>(null)
-    val selectedActorId = _selectedActorId.asStateFlow()
 
-    private val _selectedData = MutableStateFlow<List<Any>>(emptyList())
+    private val _selectedDataList = MutableStateFlow<List<Any>>(emptyList())
+    val selectedDataList = _selectedDataList.asStateFlow()
+
+    private val _selectedData = MutableStateFlow<Any?>(null)
     val selectedData = _selectedData.asStateFlow()
 
     fun setMovies(movies: List<Movie>) {
         _selectedMovies.update { movies }
     }
 
-    fun setData(anyData: List<Any>) {
-        _selectedData.value = anyData
+    fun setDataList(anyData: List<Any>) {
+        _selectedDataList.value = anyData
     }
 
-    inline fun <reified T> getDataOfType(): List<T> {
-        return selectedData.value.filterIsInstance<T>()
+    inline fun <reified T> getDataListOfType(): List<T> {
+        return selectedDataList.value.filterIsInstance<T>()
+    }
+
+    fun setData(any: Any){
+        _selectedData.value = any
+    }
+
+    inline fun <reified T> getDataOfType(): T {
+        return selectedData.value.let { it as? T } ?: throw IllegalArgumentException("Invalid data type")
     }
 
 }
