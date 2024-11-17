@@ -1,0 +1,15 @@
+[33m3552bbf[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m update actor
+[33m5c59645[m update actor
+[33md42cafe[m update actor
+[33mbda3a4b[m add new navigation
+[33m665de26[m film details page is done
+[33m0a5fd2f[m update the fetching data to more safety way
+[33m60408a4[m correct way of fetching data
+[33mc157851[m fetch data for movieDetails
+[33m63e2fcb[m add MovieDetailsViewModel
+[33mb58b551[m created states and displayed full list of films from api
+[33m442336a[m create a home page with the provided api
+[33m6cb8cdd[m fetched data added di, domain
+[33mc52a806[m adding onboarding page
+[33m9005650[m Bottom Navigation
+[33mb1c81b4[m home page
