@@ -1,8 +1,10 @@
 package sdu.project.cinemaapp.presentation.ui.filmography
 
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -63,6 +66,7 @@ fun FilmographyScreen(
 
     // Получаем объект Actor из sharedViewModel
     val actor = sharedViewModel.getDataOfType<Actor>()
+
 
     val uniqueProfessions = actor.films.map { it.professionKey }.distinct()
     Log.i("FilmographyScreen", "Unique Professions: $uniqueProfessions")
@@ -100,38 +104,41 @@ fun FilmographyScreen(
         )
         Spacer(modifier = Modifier.height(20.dp))
         // Отображение фильмов по профессиям
+        var isClicked by remember { mutableStateOf(0) }
         LazyRow(
             modifier = Modifier,
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             items(uniqueProfessions.size) { index ->
                 val profession = uniqueProfessions[index]
-                var isClicked by remember { mutableStateOf(false) }
                 Button(
-                    modifier = Modifier
-                        .height(36.dp)
-                        .background(
-                            color = if(isClicked) Color(0xFF3D3BFF) else Color.Red,
-                            shape = RoundedCornerShape(size = 56.dp)
-                        )
-                        .padding(horizontal = 5.dp),
                     onClick = {
-                        isClicked = !isClicked
+                        isClicked = index
                         viewModel.event(
                             navController,
                             FilmographyEvent.LoadMovieByProfessionKey(profession)
                         )
                         Log.i("FilmographyScreen", "Clicked profession: $profession")
                     },
-                    colors = ButtonDefaults.buttonColors(Color.Transparent),
-                ) {
-                    var profession = profession.replace("_", " ")
+                    modifier = Modifier
+                        .height(36.dp)
+                        .padding(horizontal = 5.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isClicked == index) Color(0xFF3D3BFF) else Color.Transparent,
+                    ),
+                    border = if (isClicked == index) BorderStroke(
+                        0.dp,
+                        Color.Black
+                    ) else BorderStroke(1.dp, Color.Black),
+
+                    ) {
+                    var profession = profession.toLowerCase().replace("_", " ")
                     Text(
                         text = profession.replaceFirstChar { it.uppercase() },
                         style = TextStyle(
                             fontSize = 16.sp,
                             fontFamily = FontFamily(Font(R.font.graphikregular)),
-                            color = Color(0xFFFFFFFF),
+                            color = if (isClicked == index) Color(0xFFFFFFFF) else Color.Black,
                             textAlign = TextAlign.Center,
                         )
                     )
