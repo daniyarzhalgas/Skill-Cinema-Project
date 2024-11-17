@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -44,7 +45,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import sdu.project.cinemaapp.R
 import sdu.project.cinemaapp.domain.model.FilmStaff
-import sdu.project.cinemaapp.domain.model.Image
+import sdu.project.cinemaapp.domain.model.MovieImage
 import sdu.project.cinemaapp.domain.model.Movie
 import sdu.project.cinemaapp.domain.model.SimilarMovie
 import sdu.project.cinemaapp.presentation.state.ScreenState
@@ -104,7 +105,7 @@ fun MovieContent(
     movie: Movie?,
     actors: List<FilmStaff>,
     staff: List<FilmStaff>,
-    images: List<Image>,
+    images: List<MovieImage>,
     similarFilms: List<SimilarMovie>,
     navController: NavHostController,
     viewModel: MovieDetailsViewModel
@@ -160,19 +161,86 @@ fun MovieContent(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = movie.ratingKinopoisk.toString() + " " + movie.nameRu,
-                        color = Color.White
+                        text = movie.ratingKinopoisk.toString() + " " + movie.nameRu.split(':')[0],
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily(Font(R.font.graphikmedium)),
+                            color = Color(0xFFB5B5C9),
+                            textAlign = TextAlign.Center,
+                        )
                     )
                     Spacer(modifier = Modifier.height(14.dp))
                     Text(
-                        text = movie.year.toString() + " " + movie.genres.joinToString(", ") { it.genre },
-                        color = Color.White
+                        text = movie.year.toString() + ", " + movie.genres.joinToString(", ") { it.genre },
+                        color = Color.White,
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily(Font(R.font.graphikregular)),
+                            color = Color(0xFFB5B5C9),
+                            textAlign = TextAlign.Center,
+                        )
                     )
                     Spacer(modifier = Modifier.height(14.dp))
+                    val hour = (movie.filmLength / 60).toString() + " ч";
+                    val minute = (movie.filmLength % 60).toString() + " мин";
                     Text(
-                        text = movie.countries.joinToString(", ") { it.country } + " " + movie.filmLength.toString() + " " + movie.ratingAgeLimits,
-                        color = Color.White
+                        text = movie.countries.joinToString(", ") { it.country } + ", " + hour + " " + minute + "," + movie.ratingAgeLimits.substring(
+                            3
+                        ) + "+",
+                        color = Color.White,
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            fontFamily = FontFamily(Font(R.font.graphikregular)),
+                            color = Color(0xFFB5B5C9),
+                            textAlign = TextAlign.Center,
+                        )
                     )
+                    Row {
+                        Image(
+                            painter = painterResource(R.drawable.like),
+                            contentDescription = "", modifier = Modifier
+                                .size(34.dp)
+                                .padding(8.dp)
+                                .clickable { }
+                        )
+
+                        Image(
+                            painter = painterResource(R.drawable.save),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .size(34.dp)
+                                .padding(8.dp)
+                                .clickable { }
+                        )
+
+                        Image(
+                            painter = painterResource(R.drawable.underlined_eye),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .size(34.dp)
+                                .padding(8.dp)
+                                .clickable { }
+                        )
+
+                        Image(
+                            painter = painterResource(R.drawable.share),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .size(34.dp)
+                                .padding(8.dp)
+                                .clickable { }
+                        )
+
+                        Image(
+                            painter = painterResource(R.drawable.dots),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .size(34.dp)
+                                .padding(8.dp)
+                                .clickable { }
+                        )
+
+                    }
                 }
             }
 
@@ -201,37 +269,37 @@ fun MovieContent(
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(14.dp))
-                Header("В фильме снимались", actors.size){
+                Header("В фильме снимались", actors.size) {
                     sharedViewModel.setData(actors)
                     navController.navigate("actors_screen")
                 }
                 Spacer(modifier = Modifier.height(14.dp))
-                StaffListView(staffs = actors, 4){
+                StaffListView(staffs = actors, 4) {
                     viewModel.event(navController, it)
                 }
                 Spacer(modifier = Modifier.height(14.dp))
-                Header("Над фильмом работали", staff.size){
+                Header("Над фильмом работали", staff.size) {
                     sharedViewModel.setData(staff)
                     navController.navigate("staff_screen")
                 }
                 Spacer(modifier = Modifier.height(14.dp))
-                StaffListView(staffs = staff, countItem = 2){
+                StaffListView(staffs = staff, countItem = 2) {
                     viewModel.event(navController, it)
                 }
                 Spacer(modifier = Modifier.height(14.dp))
-                Header("Галерея",images.size){
+                Header("Галерея", images.size) {
                     sharedViewModel.setData(images)
                     navController.navigate("gallery_screen")
                 }
                 Spacer(modifier = Modifier.height(14.dp))
                 ListImages(images = images)
                 Spacer(modifier = Modifier.height(14.dp))
-                Header("Похожие фильмы", similarFilms.size){
+                Header("Похожие фильмы", similarFilms.size) {
                     sharedViewModel.setData(similarFilms)
                     navController.navigate("similar_movies_screen")
                 }
                 Spacer(modifier = Modifier.height(14.dp))
-                SimilarMoviesList(similarFilms){
+                SimilarMoviesList(similarFilms) {
                     viewModel.event(navController, it)
                 }
                 Spacer(modifier = Modifier.height(30.dp))
@@ -269,22 +337,26 @@ fun Header(headerText: String, size: Int, onClick: () -> Unit) {
                 )
             )
             Image(
-                painter = painterResource(R.drawable.caret_left),
-                contentDescription = ""
+                painter = painterResource(R.drawable.caret_right),
+                contentDescription = "",
+                colorFilter = ColorFilter.tint(Color(0xFF3D3BFF))
             )
         }
     }
 }
 
 @Composable
-fun SimilarMoviesList(similarMovies: List<SimilarMovie>, onClick: (event: MovieDetailsEvent) -> Unit) {
+fun SimilarMoviesList(
+    similarMovies: List<SimilarMovie>,
+    onClick: (event: MovieDetailsEvent) -> Unit
+) {
     if (similarMovies.isNotEmpty()) {
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(similarMovies) { item ->
-                MoviesItem(item){
+                MoviesItem(item) {
                     onClick(MovieDetailsEvent.LoadMovie(item.filmId))
                 }
             }
@@ -294,7 +366,7 @@ fun SimilarMoviesList(similarMovies: List<SimilarMovie>, onClick: (event: MovieD
 }
 
 @Composable
-fun MoviesItem(movie: SimilarMovie, onClick: () -> Unit ) {
+fun MoviesItem(movie: SimilarMovie, onClick: () -> Unit) {
     Column(modifier = Modifier
         .width(111.dp)
         .clickable {
@@ -326,7 +398,7 @@ fun MoviesItem(movie: SimilarMovie, onClick: () -> Unit ) {
 }
 
 @Composable
-fun ListImages(images: List<Image>) {
+fun ListImages(images: List<MovieImage>) {
     if (images.isNotEmpty()) {
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
@@ -340,14 +412,17 @@ fun ListImages(images: List<Image>) {
                     contentScale = ContentScale.Crop
                 )
             }
-
         }
     }
 }
 
 
 @Composable
-fun StaffListView(staffs: List<FilmStaff>, countItem: Int, onClick: (event: MovieDetailsEvent) -> Unit) {
+fun StaffListView(
+    staffs: List<FilmStaff>,
+    countItem: Int,
+    onClick: (event: MovieDetailsEvent) -> Unit
+) {
     if (staffs.isNotEmpty()) {
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
@@ -355,9 +430,9 @@ fun StaffListView(staffs: List<FilmStaff>, countItem: Int, onClick: (event: Movi
         ) {
 
             items(staffs.chunked(countItem)) { item ->
-                Column (verticalArrangement = Arrangement.spacedBy(10.dp)){
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     item.forEach { staff ->
-                        StaffItem(staff = staff){
+                        StaffItem(staff = staff) {
                             Log.i("StaffItem", "StaffItem: $staff")
                             onClick(MovieDetailsEvent.LoadStaff(staff.staffId))
                         }
@@ -377,8 +452,8 @@ fun StaffItem(staff: FilmStaff, onClick: (Int) -> Unit) {
             .clickable {
                 onClick(staff.staffId)
             },
-        verticalAlignment = Alignment.CenterVertically
-        , horizontalArrangement = Arrangement.spacedBy(16.dp)
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         AsyncImage(
             model = staff.posterUrl,

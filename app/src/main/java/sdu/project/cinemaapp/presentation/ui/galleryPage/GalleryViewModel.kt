@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import sdu.project.cinemaapp.domain.model.Image
+import sdu.project.cinemaapp.domain.model.MovieImage
 import sdu.project.cinemaapp.presentation.state.ScreenState
 import sdu.project.cinemaapp.presentation.viewModel.SharedViewModel
 import javax.inject.Inject
@@ -18,7 +18,7 @@ class GalleryViewModel @Inject constructor(
     private val _state = MutableStateFlow<ScreenState>(ScreenState.Initial)
     val state = _state.asStateFlow()
 
-    private val _gallery = MutableStateFlow<List<Image>>(emptyList())
+    private val _gallery = MutableStateFlow<List<MovieImage>>(emptyList())
     val gallery = _gallery.asStateFlow()
 
     init {
@@ -30,7 +30,7 @@ class GalleryViewModel @Inject constructor(
 
         try {
 
-            val gallery = sharedViewModel.getDataOfType<Image>()
+            val gallery = sharedViewModel.getDataOfType<MovieImage>()
 
             if(gallery.isEmpty()){
                 Log.e("GalleryViewModel", "Gallery is empty")

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import sdu.project.cinemaapp.domain.model.FilmStaff
-import sdu.project.cinemaapp.domain.model.Image
+import sdu.project.cinemaapp.domain.model.MovieImage
 import sdu.project.cinemaapp.domain.model.Movie
 import sdu.project.cinemaapp.domain.model.SimilarMovie
 import sdu.project.cinemaapp.domain.repository.MoviesRepository
@@ -44,7 +44,7 @@ class MovieDetailsViewModel @Inject constructor(
     private val _staff = MutableStateFlow<List<FilmStaff>>(emptyList())
     val staff = _staff.asStateFlow()
 
-    private val _images = MutableStateFlow<List<Image>>(emptyList())
+    private val _images = MutableStateFlow<List<MovieImage>>(emptyList())
     val images = _images.asStateFlow()
 
     private val _similarFilms = MutableStateFlow<List<SimilarMovie>>(emptyList())

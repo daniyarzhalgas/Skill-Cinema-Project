@@ -4,7 +4,7 @@ import android.util.Log
 import sdu.project.cinemaapp.data.remote.MoviesApi
 import sdu.project.cinemaapp.domain.model.Actor
 import sdu.project.cinemaapp.domain.model.FilmStaff
-import sdu.project.cinemaapp.domain.model.Image
+import sdu.project.cinemaapp.domain.model.MovieImage
 import sdu.project.cinemaapp.domain.model.Movie
 import sdu.project.cinemaapp.domain.model.SimilarMovie
 import sdu.project.cinemaapp.domain.repository.MoviesRepository
@@ -50,7 +50,7 @@ class MoviesRepositoryImpl @Inject constructor(private val api: MoviesApi) : Mov
         return api.getActor(id)
     }
 
-    override suspend fun getImages(id: Int):List<Image>{
+    override suspend fun getImages(id: Int):List<MovieImage>{
         return api.getImages(id, null).items
     }
 
