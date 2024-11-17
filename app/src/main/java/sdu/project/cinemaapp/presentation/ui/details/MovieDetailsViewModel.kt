@@ -56,7 +56,7 @@ class MovieDetailsViewModel @Inject constructor(
             is MovieDetailsEvent.LoadMovie -> fetchAllMovieDetails(event.movieId)
 
             is MovieDetailsEvent.LoadStaff -> {
-                navController.navigate("actor_details") {
+                navController.navigate("actor_details/${event.staffId}") {
                     launchSingleTop = true
                 }
             }
