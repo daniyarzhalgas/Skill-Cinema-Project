@@ -18,9 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -43,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import sdu.project.cinemaapp.R
 import sdu.project.cinemaapp.domain.model.FilmStaff
@@ -52,19 +50,29 @@ import sdu.project.cinemaapp.domain.model.SimilarMovie
 import sdu.project.cinemaapp.presentation.state.ScreenState
 import sdu.project.cinemaapp.presentation.ui.screens.ErrorScreen
 import sdu.project.cinemaapp.presentation.ui.screens.LoaderScreen
+import sdu.project.cinemaapp.presentation.viewModel.SharedViewModel
 
 @Composable
 fun MovieDetailsScreen(
-    movieId: Int,
+    navController: NavHostController,
+    movieId: Int?,
     viewModel: MovieDetailsViewModel = hiltViewModel()
 ) {
+
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(movieId) {
+        movieId?.let {
+            viewModel.loadMovieDetails(it)
+        }
+    }
 
     val getMovie by viewModel.movie.collectAsStateWithLifecycle()
     val getActors by viewModel.actors.collectAsStateWithLifecycle()
     val getStaff by viewModel.staff.collectAsStateWithLifecycle()
     val getImages by viewModel.images.collectAsStateWithLifecycle()
     val getSimilarFilms by viewModel.similarFilms.collectAsStateWithLifecycle()
+
 
     when (state) {
         is ScreenState.Initial -> {}
@@ -75,7 +83,9 @@ fun MovieDetailsScreen(
                 getActors,
                 getStaff,
                 getImages,
-                getSimilarFilms
+                getSimilarFilms,
+                navController,
+                viewModel
             )
             Log.i("MovieContent", "Getting Movie: ${getMovie.toString()}")
             Log.i("MovieContent", "Getting Actors: $getActors")
@@ -95,7 +105,9 @@ fun MovieContent(
     actors: List<FilmStaff>,
     staff: List<FilmStaff>,
     images: List<Image>,
-    similarFilms: List<SimilarMovie>
+    similarFilms: List<SimilarMovie>,
+    navController: NavHostController,
+    viewModel: MovieDetailsViewModel
 ) {
 
     val scrollState = rememberScrollState()
@@ -138,7 +150,7 @@ fun MovieContent(
                         .offset(x = 10.dp, y = 10.dp)
                         .align(Alignment.TopStart)
                         .clickable {
-
+                            viewModel.event(navController, MovieDetailsEvent.OnBackClick)
                         }
                 )
 
@@ -189,21 +201,27 @@ fun MovieContent(
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(14.dp))
-                header("В фильме снимались", actors.size)
+                Header("В фильме снимались", actors.size)
                 Spacer(modifier = Modifier.height(14.dp))
-                StaffListView(staffs = actors, 4)
+                StaffListView(staffs = actors, 4){
+                    viewModel.event(navController, it)
+                }
                 Spacer(modifier = Modifier.height(14.dp))
-                header("Над фильмом работали", staff.size)
+                Header("Над фильмом работали", staff.size)
                 Spacer(modifier = Modifier.height(14.dp))
-                StaffListView(staffs = staff, countItem = 2)
+                StaffListView(staffs = staff, countItem = 2){
+                    viewModel.event(navController, it)
+                }
                 Spacer(modifier = Modifier.height(14.dp))
-                header("Галерея",images.size)
+                Header("Галерея",images.size)
                 Spacer(modifier = Modifier.height(14.dp))
                 ListImages(images = images)
                 Spacer(modifier = Modifier.height(14.dp))
-                header("Похожие фильмы", similarFilms.size)
+                Header("Похожие фильмы", similarFilms.size)
                 Spacer(modifier = Modifier.height(14.dp))
-                SimilarMoviesList(similarFilms)
+                SimilarMoviesList(similarFilms){
+                    viewModel.event(navController, it)
+                }
                 Spacer(modifier = Modifier.height(30.dp))
             }
         }
@@ -211,7 +229,7 @@ fun MovieContent(
 }
 
 @Composable
-fun header(headerText: String, size: Int) {
+fun Header(headerText: String, size: Int) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -247,14 +265,16 @@ fun header(headerText: String, size: Int) {
 }
 
 @Composable
-fun SimilarMoviesList(similarMovies: List<SimilarMovie>) {
+fun SimilarMoviesList(similarMovies: List<SimilarMovie>, onClick: (event: MovieDetailsEvent) -> Unit) {
     if (similarMovies.isNotEmpty()) {
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(similarMovies) { item ->
-                MoviesItem(item)
+                MoviesItem(item){
+                    onClick(MovieDetailsEvent.LoadMovie(item.filmId))
+                }
             }
 
         }
@@ -262,11 +282,11 @@ fun SimilarMoviesList(similarMovies: List<SimilarMovie>) {
 }
 
 @Composable
-fun MoviesItem(movie: SimilarMovie) {
+fun MoviesItem(movie: SimilarMovie, onClick: () -> Unit ) {
     Column(modifier = Modifier
         .width(111.dp)
         .clickable {
-            //todo переход на экран фильма
+            onClick()
         }) {
         AsyncImage(
             model = movie.posterUrl,
@@ -315,7 +335,7 @@ fun ListImages(images: List<Image>) {
 
 
 @Composable
-fun StaffListView(staffs: List<FilmStaff>, countItem: Int) {
+fun StaffListView(staffs: List<FilmStaff>, countItem: Int, onClick: (event: MovieDetailsEvent) -> Unit) {
     if (staffs.isNotEmpty()) {
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
@@ -325,7 +345,10 @@ fun StaffListView(staffs: List<FilmStaff>, countItem: Int) {
             items(staffs.chunked(countItem)) { item ->
                 Column (verticalArrangement = Arrangement.spacedBy(10.dp)){
                     item.forEach { staff ->
-                        StaffItem(staff = staff)
+                        StaffItem(staff = staff){
+                            Log.i("StaffItem", "StaffItem: $staff")
+                            onClick(MovieDetailsEvent.LoadStaff(staff.staffId))
+                        }
                     }
                 }
             }
@@ -335,12 +358,12 @@ fun StaffListView(staffs: List<FilmStaff>, countItem: Int) {
 }
 
 @Composable
-fun StaffItem(staff: FilmStaff) {
+fun StaffItem(staff: FilmStaff, onClick: (Int) -> Unit) {
     Row(
         modifier = Modifier
             .height(68.dp)
             .clickable {
-                // todo: переход на экран актера
+                onClick(staff.staffId)
             },
         verticalAlignment = Alignment.CenterVertically
         , horizontalArrangement = Arrangement.spacedBy(16.dp)

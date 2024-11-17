@@ -27,7 +27,7 @@ class ListMoviesViewModel @Inject constructor(
     fun event(navController: NavController, event: ListMoviesEvent) {
         when (event) {
             is ListMoviesEvent.OnItemClick -> {
-                navController.navigate("details/${event.movie.kinopoiskId}") {
+                navController.navigate("details/${event.movieId}") {
                     launchSingleTop = true
                 }
             }

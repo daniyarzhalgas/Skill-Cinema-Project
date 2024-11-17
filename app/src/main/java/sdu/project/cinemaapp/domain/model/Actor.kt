@@ -17,5 +17,5 @@ data class Actor (
     val profession: List<String>,
     val facts: List<Fact>,
     val spouses: List<Spouse>,
-    val films: List<Movie>,
+    val films: List<ActorsMovie>,
 )

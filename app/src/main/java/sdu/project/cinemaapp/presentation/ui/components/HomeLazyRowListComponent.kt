@@ -81,7 +81,7 @@ fun HomeLazyRowListComponent(
             }
             items(movies.take(10)) { movie ->
                 MovieItemCard(movie){
-                    onEvent(HomeEvent.OnItemClick(movie))
+                    onEvent(HomeEvent.OnItemClick(movie.kinopoiskId))
                 }
             }
             item {

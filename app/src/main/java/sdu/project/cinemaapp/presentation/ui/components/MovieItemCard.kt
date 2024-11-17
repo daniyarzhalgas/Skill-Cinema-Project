@@ -31,16 +31,14 @@ import sdu.project.cinemaapp.presentation.viewModel.SharedViewModel
 @Composable
 fun MovieItemCard(
     movie: Movie,
-    onClick: (Movie) -> Unit,
+    onClick: (Int) -> Unit,
 ) {
-    val sharedViewModel: SharedViewModel = hiltViewModel()
 
     Column(
         modifier = Modifier
             .padding(end = 8.dp)
             .clickable {
-                onClick(movie)
-                sharedViewModel.setMovie(movie)
+                onClick(movie.kinopoiskId)
             }
             .wrapContentWidth()
             .width(111.dp)

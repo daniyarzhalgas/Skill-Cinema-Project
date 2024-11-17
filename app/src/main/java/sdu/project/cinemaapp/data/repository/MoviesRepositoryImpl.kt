@@ -25,13 +25,25 @@ class MoviesRepositoryImpl @Inject constructor(private val api: MoviesApi) : Mov
     }
 
     override suspend fun getActors(id: Int): List<FilmStaff> {
-        return api.getStaff(id)
-            .filter { it.professionKey == "ACTOR" }
+        val allStaff = api.getStaff(id).toList()
+
+        if (allStaff.isEmpty()){
+            Log.e("Actors", "No actors found")
+            return emptyList()
+        }
+
+        return allStaff.filter { it.professionKey == "ACTOR" }
     }
 
     override suspend fun getStaff(id: Int): List<FilmStaff> {
-        Log.i("MoviesRepositoryImpl", "Getting Staff ${api.getStaff(id)}")
-        return api.getStaff(id)
+        val allStaff = api.getStaff(id).toList()
+
+        if (allStaff.isEmpty()){
+            Log.e("Staff", "No staff found")
+            return emptyList()
+        }
+
+        return allStaff.filter { it.professionKey != "ACTOR" }
     }
 
     override suspend fun getActor(id: Int): Actor {
@@ -43,8 +55,6 @@ class MoviesRepositoryImpl @Inject constructor(private val api: MoviesApi) : Mov
     }
 
     override suspend fun getSimilarMovies(id: Int): List<SimilarMovie> {
-        Log.i("MoviesRepositoryImpl", "Getting similar films")
-        Log.i("MoviesRepositoryImpl", "Getting similar films ${api.getSimilarMovies(id).items}")
         return api.getSimilarMovies(id).items
     }
 }

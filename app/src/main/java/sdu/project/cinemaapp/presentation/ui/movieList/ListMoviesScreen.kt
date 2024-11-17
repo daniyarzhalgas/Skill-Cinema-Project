@@ -105,7 +105,7 @@ fun ListMoviesLayout(
         ) {
             items(movies) { movie ->
                 MovieItemCard(movie) {
-                    onEvent(ListMoviesEvent.OnItemClick(movie))
+                    onEvent(ListMoviesEvent.OnItemClick(movie.kinopoiskId))
                 }
             }
         }

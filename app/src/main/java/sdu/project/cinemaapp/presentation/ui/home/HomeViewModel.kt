@@ -1,6 +1,5 @@
 package sdu.project.cinemaapp.presentation.ui.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
@@ -52,7 +51,7 @@ class HomeViewModel @Inject constructor(
     fun event(navController: NavHostController, event: HomeEvent) {
         when (event) {
             is HomeEvent.OnItemClick -> {
-                navController.navigate("details/${event.movie.kinopoiskId}") {
+                navController.navigate("details/${event.movieId}") {
                     launchSingleTop = true
                 }
             }

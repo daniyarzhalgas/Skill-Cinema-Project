@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import sdu.project.cinemaapp.presentation.navigation.BottomBarNavigation
+import sdu.project.cinemaapp.presentation.ui.actor.ActorScreen
 import sdu.project.cinemaapp.presentation.ui.components.BottomBar
 import sdu.project.cinemaapp.presentation.ui.screens.ProfileScreen
 import sdu.project.cinemaapp.presentation.ui.screens.SearchScreen
@@ -34,13 +35,10 @@ fun MainNavGraph(
             }
         }
 
-        composable("details/{itemId}") { entry ->
-
-            val itemId = entry.arguments?.getString("itemId")?.toIntOrNull()
-
-            itemId?.let {
-                MovieDetailsScreen(itemId)
-                Log.d("ItemCheck", "Item ID is valid: $itemId")
+        composable("details/{id}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+            id?.let {
+                MovieDetailsScreen(navController, id)
             }
         }
 
@@ -65,6 +63,9 @@ fun MainNavGraph(
             ) {
                 ProfileScreen()
             }
+        }
+        composable("actor_details") {
+            ActorScreen(navController)
         }
     }
 }
