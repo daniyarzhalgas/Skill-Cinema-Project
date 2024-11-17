@@ -1,5 +1,6 @@
 package sdu.project.cinemaapp.presentation.ui.actor
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
@@ -16,6 +17,16 @@ import javax.inject.Inject
 class ActorViewModel @Inject constructor(
     private val moviesRepository: MoviesRepository,
 ) : ViewModel() {
+
+    private var isDataLoaded = false
+
+    fun loadActorDetails(id: Int) {
+        if (isDataLoaded) return
+
+        fetchActorData(id)
+        isDataLoaded = true
+    }
+
 
     private val _state = MutableStateFlow<ScreenState>(ScreenState.Initial)
     val state = _state.asStateFlow()
@@ -38,9 +49,11 @@ class ActorViewModel @Inject constructor(
             _state.value = ScreenState.Loading
             try {
                 val actor = moviesRepository.getActor(id)
+                Log.i("ActorViewModel", "Actor: $actor")
                 _actor.value = actor
                 _state.value = ScreenState.Success
             } catch (e: Exception) {
+                Log.e("ActorViewModel", "Error: $e")
                 _state.value = ScreenState.Error
             }
         }

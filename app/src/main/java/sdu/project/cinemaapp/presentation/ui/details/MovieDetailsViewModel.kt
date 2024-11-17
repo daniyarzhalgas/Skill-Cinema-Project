@@ -60,7 +60,6 @@ class MovieDetailsViewModel @Inject constructor(
                     launchSingleTop = true
                 }
             }
-
             is MovieDetailsEvent.OnBackClick -> {
                 navController.popBackStack()
             }

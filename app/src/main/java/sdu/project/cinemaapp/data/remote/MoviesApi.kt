@@ -41,9 +41,9 @@ interface MoviesApi {
     ): List<FilmStaff>
 
     @Headers("X-API-KEY: $API_KEY")
-    @GET("/api/v1/staff")
+    @GET("/api/v1/staff/{id}")
     suspend fun getActor(
-            @Query("id") actorId: Int
+        @Path("id") actorId: Int
     ):Actor
 
     @Headers("X-API-KEY: $API_KEY")

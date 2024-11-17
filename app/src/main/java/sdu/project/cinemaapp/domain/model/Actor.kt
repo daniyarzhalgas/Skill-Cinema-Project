@@ -13,9 +13,9 @@ data class Actor (
     val age: Int,
     val birthplace: String,
     val deathplace: String,
-    val hasAwards: Int,
-    val profession: List<String>,
-    val facts: List<Fact>,
     val spouses: List<Spouse>,
+    val hasAwards: Int,
+    val profession:String,
+    val facts: List<String>,
     val films: List<ActorsMovie>,
 )

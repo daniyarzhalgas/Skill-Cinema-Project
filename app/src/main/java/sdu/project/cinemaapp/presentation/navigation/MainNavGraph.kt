@@ -68,6 +68,7 @@ fun MainNavGraph(
             val actorId = backStackEntry.arguments?.getString("id")?.toIntOrNull()
 
             actorId?.let{
+                Log.i("ActorId", "ActorId: $actorId")
                 ActorScreen(navController, actorId)
             }
         }
