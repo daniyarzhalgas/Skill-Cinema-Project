@@ -65,9 +65,7 @@ fun ActorScreen(
         is ScreenState.Success -> {
             actor?.let {
                 Log.i("ActorScreen", "Getting Actor: $actor")
-                ActorContent(actor!!, movies, navController, viewModel){
-                   viewModel.event(navController, ActorEvent.OnFilmographyClick)
-                }
+                ActorContent(actor!!, movies, navController, viewModel)
             }
         }
     }
@@ -80,9 +78,8 @@ fun ActorContent(
     movies: List<Movie>,
     navController: NavHostController,
     viewModel: ActorViewModel,
-    onClick: () -> Unit
 ) {
-    val sharedViewModel : SharedViewModel = hiltViewModel()
+    val sharedViewModel: SharedViewModel = hiltViewModel()
 
     Column(
         modifier = Modifier
@@ -168,7 +165,9 @@ fun ActorContent(
         Spacer(modifier = Modifier.height(24.dp))
 
 
-        ActorFilms(movies)
+        ActorFilms(movies){movies ->
+            viewModel.event(navController, ActorEvent.OnMovieClick(movies))
+        }
 
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -191,7 +190,7 @@ fun ActorContent(
                 modifier = Modifier.clickable {
                     sharedViewModel.setData(actor)
                     sharedViewModel.setMovies(movies)
-                    onClick()
+                    viewModel.event(navController, ActorEvent.OnFilmographyClick)
                 }) {
                 Text(
                     text = "К списку",
@@ -223,20 +222,24 @@ fun ActorContent(
 
 
 @Composable
-fun ActorFilms(movies: List<Movie>) {
+fun ActorFilms(movies: List<Movie>, onItemClick: (Int) -> Unit) {
     LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        items(movies.take(10)) {
-            FilmItem(it)
+        items(movies.take(10)) { movie ->
+            FilmItem(movie) { onItemClick(movie.kinopoiskId) }
         }
     }
 }
 
 
 @Composable
-fun FilmItem(movie: Movie) {
+fun FilmItem(movie: Movie, onClick: (Int) -> Unit) {
     Column(
-        modifier = Modifier.width(111.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        modifier = Modifier
+            .width(111.dp)
+            .clickable {
+                onClick(movie.kinopoiskId)
+            },
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         AsyncImage(
             model = movie.posterUrlPreview,

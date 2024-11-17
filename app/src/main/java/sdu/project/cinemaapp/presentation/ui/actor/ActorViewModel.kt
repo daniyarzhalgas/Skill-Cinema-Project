@@ -49,6 +49,9 @@ class ActorViewModel @Inject constructor(
             is ActorEvent.OnFilmographyClick -> {
                 navController.navigate("filmography")
             }
+            is ActorEvent.OnMovieClick -> {
+                navController.navigate("details/${event.movieId}")
+            }
         }
     }
 

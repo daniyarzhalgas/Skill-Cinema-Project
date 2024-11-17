@@ -140,15 +140,15 @@ fun MovieContent(
                         .background(
                             brush = Brush.verticalGradient(
                                 colors = listOf(
-                                    Color(27, 27, 27, 1),
-                                    Color(27, 27, 27)
+                                    Color(0x00000000),
+                                    Color(0xFF1B1B1B)
                                 )
                             )
                         )
                 )
                 Image(painter = painterResource(R.drawable.caret_left), contentDescription = "",
                     modifier = Modifier
-                        .size(35.dp)
+                        .size(45.dp)
                         .offset(x = 10.dp, y = 10.dp)
                         .align(Alignment.TopStart)
                         .clickable {

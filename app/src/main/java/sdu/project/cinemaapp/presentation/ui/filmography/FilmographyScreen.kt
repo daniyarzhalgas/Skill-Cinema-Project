@@ -125,7 +125,7 @@ fun FilmographyScreen(
                     },
                     colors = ButtonDefaults.buttonColors(Color.Transparent),
                 ) {
-                    var profession = profession.toLowerCase().replace("_", " ")
+                    var profession = profession.replace("_", " ")
                     Text(
                         text = profession.replaceFirstChar { it.uppercase() },
                         style = TextStyle(
