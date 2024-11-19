@@ -8,5 +8,5 @@ interface MovieDetailsEvent: Event {
     data class LoadStaff(val staffId: Int): MovieDetailsEvent
     data object OnBackClick : MovieDetailsEvent
     data object LoadGallery: MovieDetailsEvent
-
+    data class NavigateToList(val title: String) : MovieDetailsEvent
 }

@@ -132,7 +132,7 @@ fun FilmographyScreen(
                     ) else BorderStroke(1.dp, Color.Black),
 
                     ) {
-                    var profession = profession.toLowerCase().replace("_", " ")
+                    val profession = profession.replace("_", " ")
                     Text(
                         text = profession.replaceFirstChar { it.uppercase() },
                         style = TextStyle(
@@ -155,7 +155,9 @@ fun FilmographyScreen(
             }
 
             is ScreenState.Success -> {
-                FilmographyScreen(filmography)
+                FilmographyScreen(filmography){
+                    viewModel.event(navController, FilmographyEvent.OnMovieClick(it))
+                }
             }
 
             is ScreenState.Error -> {
@@ -169,21 +171,24 @@ fun FilmographyScreen(
 @Composable
 fun FilmographyScreen(
     filmography: List<Movie>,
+    onItemClick: (Int) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier,
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(filmography) { movie ->
-            MovieItem(movie)
+            MovieItem(movie){
+                onItemClick(movie.kinopoiskId)
+            }
         }
     }
 }
 
 @Composable
-fun MovieItem(movie: Movie) {
+fun MovieItem(movie: Movie, onItemClick: () -> Unit) {
     Row(
-        modifier = Modifier.height(132.dp),
+        modifier = Modifier.height(132.dp).clickable { onItemClick() },
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Box() {

@@ -66,6 +66,9 @@ class MovieDetailsViewModel @Inject constructor(
             is MovieDetailsEvent.LoadGallery -> {
                 navController.navigate("gallery_screen")
             }
+            is MovieDetailsEvent.NavigateToList -> {
+                navController.navigate("list_screen/${event.title}")
+            }
         }
     }
 

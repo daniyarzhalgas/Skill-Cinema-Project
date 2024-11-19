@@ -61,15 +61,15 @@ fun HomeScreen(
                     modifier = Modifier.padding(start = 30.dp, top = 30.dp)
                 )
                 HomeLazyRowListComponent("Премьеры", premieres){
-                    sharedViewModel.setMovies(premieres)
+                    sharedViewModel.setDataList(premieres)
                     viewModel.event(navController, it)
                 }
                 HomeLazyRowListComponent("Комиксы", popularAll){
-                    sharedViewModel.setMovies(popularAll)
+                    sharedViewModel.setDataList(popularAll)
                     viewModel.event(navController, it)
                 }
                 HomeLazyRowListComponent("Популярные фильмы", popularMovies){
-                    sharedViewModel.setMovies(popularMovies)
+                    sharedViewModel.setDataList(popularMovies)
                     viewModel.event(navController, it)
                 }
             }

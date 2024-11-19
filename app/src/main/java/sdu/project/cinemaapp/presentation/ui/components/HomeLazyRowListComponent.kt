@@ -80,7 +80,7 @@ fun HomeLazyRowListComponent(
                 Spacer(Modifier.width(30.dp))
             }
             items(movies.take(10)) { movie ->
-                MovieItemCard(movie){
+                ItemCard(movie.kinopoiskId, movie.posterUrlPreview, movie.ratingKinopoisk, movie.nameRu, movie.genres, null){
                     onEvent(HomeEvent.OnItemClick(movie.kinopoiskId))
                 }
             }

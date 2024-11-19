@@ -22,23 +22,26 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import sdu.project.cinemaapp.R
-import sdu.project.cinemaapp.domain.model.Movie
-import sdu.project.cinemaapp.presentation.viewModel.SharedViewModel
+import sdu.project.cinemaapp.domain.model.Genre
 
 @Composable
-fun MovieItemCard(
-    movie: Movie,
-    onClick: (Int) -> Unit,
-) {
-
+fun ItemCard(
+    id: Int,
+    posterUrl: String,
+    ratingKinopoisk: Double?,
+    nameRu: String,
+    genres: List<Genre>?,
+    profession: String?,
+    onClick: (Int) -> Unit
+){
+    Log.d("ItemCard", "id: $id")
     Column(
         modifier = Modifier
             .padding(end = 8.dp)
             .clickable {
-                onClick(movie.kinopoiskId)
+                onClick(id)
             }
             .wrapContentWidth()
             .width(111.dp)
@@ -46,7 +49,7 @@ fun MovieItemCard(
     ) {
         Box{
             AsyncImage(
-                model = movie.posterUrlPreview,
+                model = posterUrl,
                 contentDescription = null,
                 modifier = Modifier
                     .height(150.dp)
@@ -64,18 +67,20 @@ fun MovieItemCard(
                 contentAlignment = Alignment.Center
             )
             {
-                Text(
-                    text = movie.ratingKinopoisk.toString(),
-                    style = TextStyle(
-                        fontSize = 8.sp
-                    ),
-                    color = Color.White
-                )
+                ratingKinopoisk?.let {
+                    Text(
+                        text = ratingKinopoisk.toString(),
+                        style = TextStyle(
+                            fontSize = 8.sp
+                        ),
+                        color = Color.White
+                    )
+                }
             }
 
         }
         Text(
-            text = movie.nameRu,
+            text = nameRu,
             modifier = Modifier.padding(top = 8.dp).width(100.dp),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
@@ -85,14 +90,27 @@ fun MovieItemCard(
                 color = Color(0xFF272727)
             )
         )
-        Text(
-            text = movie.genres.firstOrNull()?.genre ?: "No genre",
-            modifier = Modifier.padding(top = 2.dp),
-            style = TextStyle(
-                fontSize = 12.sp,
-                fontFamily = FontFamily(Font(R.font.graphikregular)),
-                color = Color(0xFF838390)
+        genres?.let{
+            Text(
+                text = genres.firstOrNull()?.genre ?: "No genre",
+                modifier = Modifier.padding(top = 2.dp),
+                style = TextStyle(
+                    fontSize = 12.sp,
+                    fontFamily = FontFamily(Font(R.font.graphikregular)),
+                    color = Color(0xFF838390)
+                )
             )
-        )
+        }
+        profession?.let{
+            Text(
+                text = profession,
+                modifier = Modifier.padding(top = 2.dp),
+                style = TextStyle(
+                    fontSize = 12.sp,
+                    fontFamily = FontFamily(Font(R.font.graphikregular)),
+                    color = Color(0xFF838390)
+                )
+            )
+        }
     }
 }

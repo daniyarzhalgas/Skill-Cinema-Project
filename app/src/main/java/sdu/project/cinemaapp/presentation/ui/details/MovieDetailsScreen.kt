@@ -272,7 +272,7 @@ fun MovieContent(
                 Spacer(modifier = Modifier.height(14.dp))
                 Header("В фильме снимались", actors.size) {
                     sharedViewModel.setDataList(actors)
-                    navController.navigate("list_screen/{title}")
+                    viewModel.event(navController, MovieDetailsEvent.NavigateToList("В фильме снимались"))
                 }
                 Spacer(modifier = Modifier.height(14.dp))
                 StaffListView(staffs = actors, 4) {
@@ -281,7 +281,7 @@ fun MovieContent(
                 Spacer(modifier = Modifier.height(14.dp))
                 Header("Над фильмом работали", staff.size) {
                     sharedViewModel.setDataList(staff)
-                    navController.navigate("list_screen/{title}")
+                    viewModel.event(navController, MovieDetailsEvent.NavigateToList("Над фильмом работали"))
                 }
                 Spacer(modifier = Modifier.height(14.dp))
                 StaffListView(staffs = staff, countItem = 2) {
@@ -297,7 +297,7 @@ fun MovieContent(
                 Spacer(modifier = Modifier.height(14.dp))
                 Header("Похожие фильмы", similarFilms.size) {
                     sharedViewModel.setDataList(similarFilms)
-                    navController.navigate("list_screen/{title}")
+                    viewModel.event(navController, MovieDetailsEvent.NavigateToList("Похожие фильмы"))
                 }
                 Spacer(modifier = Modifier.height(14.dp))
                 SimilarMoviesList(similarFilms) {
@@ -311,6 +311,7 @@ fun MovieContent(
 
 @Composable
 fun Header(headerText: String, size: Int, onClick: (String) -> Unit) {
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,

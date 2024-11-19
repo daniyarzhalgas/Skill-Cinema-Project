@@ -16,7 +16,7 @@ import sdu.project.cinemaapp.presentation.ui.home.HomeScreen
 import sdu.project.cinemaapp.presentation.ui.details.MovieDetailsScreen
 import sdu.project.cinemaapp.presentation.ui.filmography.FilmographyScreen
 import sdu.project.cinemaapp.presentation.ui.galleryPage.GalleryScreen
-import sdu.project.cinemaapp.presentation.ui.movieList.ListMoviesScreen
+import sdu.project.cinemaapp.presentation.ui.list.ListObjectsScreen
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -49,7 +49,7 @@ fun MainNavGraph(
 
             val title = backStackEntry.arguments?.getString("title")
 
-            title?.let { ListMoviesScreen(title = title, navController) }
+            title?.let { ListObjectsScreen(title = title, navController) }
         }
 
         composable(route = BottomBarNavigation.Search.route) {

@@ -1,4 +1,4 @@
-package sdu.project.cinemaapp.presentation.ui.movieList
+package sdu.project.cinemaapp.presentation.ui.list
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -31,18 +31,20 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import sdu.project.cinemaapp.R
+import sdu.project.cinemaapp.domain.model.FilmStaff
 import sdu.project.cinemaapp.domain.model.Movie
+import sdu.project.cinemaapp.domain.model.SimilarMovie
 import sdu.project.cinemaapp.presentation.state.ScreenState
-import sdu.project.cinemaapp.presentation.ui.components.MovieItemCard
+import sdu.project.cinemaapp.presentation.ui.components.ItemCard
 import sdu.project.cinemaapp.presentation.ui.screens.ErrorScreen
 import sdu.project.cinemaapp.presentation.ui.screens.LoaderScreen
 
 @SuppressLint("UnrememberedMutableState", "StateFlowValueCalledInComposition")
 @Composable
-fun ListMoviesScreen(
+fun ListObjectsScreen(
     title: String,
     navController: NavController,
-    viewModel: ListMoviesViewModel = hiltViewModel(),
+    viewModel: ListObjectsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val movies by viewModel.movies.collectAsStateWithLifecycle()
@@ -52,7 +54,7 @@ fun ListMoviesScreen(
         is ScreenState.Loading -> LoaderScreen()
         is ScreenState.Error -> ErrorScreen()
         is ScreenState.Success -> {
-            ListMoviesLayout(title, movies) {
+            ListObjectsLayout(title, movies) {
                 viewModel.event(navController, it)
             }
         }
@@ -62,12 +64,11 @@ fun ListMoviesScreen(
 
 
 @Composable
-fun ListMoviesLayout(
+fun ListObjectsLayout(
     title: String,
-    movies: List<Movie>,
-    onEvent: (event: ListMoviesEvent) -> Unit
+    listObj: List<Any>,
+    onEvent: (event: ListObjectsEvent) -> Unit
 ) {
-    Log.d("ListMoviesLayout", "Movies: $movies")
     Column(
         modifier = Modifier
             .padding(26.dp)
@@ -77,7 +78,7 @@ fun ListMoviesLayout(
         Box(modifier = Modifier.fillMaxWidth()) {
 
             IconButton(
-                onClick = { onEvent(ListMoviesEvent.OnBackClick) },
+                onClick = { onEvent(ListObjectsEvent.OnBackClick) },
                 modifier = Modifier.align(Alignment.CenterStart)
             ) {
                 Image(
@@ -99,15 +100,35 @@ fun ListMoviesLayout(
                 )
             )
         }
+
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(movies) { movie ->
-                MovieItemCard(movie) {
-                    onEvent(ListMoviesEvent.OnItemClick(movie.kinopoiskId))
+            items(listObj) { obj ->
+
+                when (obj) {
+                    is Movie -> {
+                        ItemCard(obj.kinopoiskId, obj.posterUrlPreview, obj.ratingKinopoisk, obj.nameRu, obj.genres, null) {
+                            onEvent(ListObjectsEvent.OnMovieClick(obj.kinopoiskId))
+                        }
+                        Log.d("ListObjectsScreen", "obj: $obj")
+                    }
+
+                    is SimilarMovie -> {
+                        ItemCard(obj.filmId, obj.posterUrlPreview, null, obj.nameRu, null, null) {
+                            onEvent(ListObjectsEvent.OnMovieClick(obj.filmId))
+                        }
+                        Log.d("ListObjectsScreen", "obj: $obj")
+                    }
+
+                    is FilmStaff -> {ItemCard(obj.staffId, obj.posterUrl, null, obj.nameRu, null, obj.professionKey) {
+                        onEvent(ListObjectsEvent.OnActorClick(obj.staffId))
+                    }
+                        Log.d("ListObjectsScreen", "obj: $obj")
+                    }
                 }
-            }
+           }
         }
     }
 }

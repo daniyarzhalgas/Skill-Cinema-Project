@@ -145,7 +145,8 @@ fun ActorContent(
 
             Row(verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.clickable {
-                    //todo
+                    sharedViewModel.setDataList(movies)
+                    viewModel.event(navController, ActorEvent.NavigateToList("Лучшее"))
                 }) {
                 Text(
                     text = "Все",

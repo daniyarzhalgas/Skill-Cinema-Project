@@ -53,15 +53,12 @@ class FilmographyViewModel @Inject constructor(
         _state.value = ScreenState.Loading
         viewModelScope.launch {
             try {
-                // Фильтруем фильмы по профессии
                 val moviesByProfession = actor.films.filter {
                     it.professionKey == professionKey
-                } ?: emptyList()
+                }
 
-                // Получаем список фильмов из sharedViewModel
-                val allMovies = sharedViewModel.selectedMovies.value
+                val allMovies = sharedViewModel.selectedMovies.value.distinctBy { it.kinopoiskId }
 
-                // Фильтруем фильмы по ID
                 val filteredMovies = allMovies.filter { movie ->
                     movie.kinopoiskId in moviesByProfession.map { it.filmId }
                 }
