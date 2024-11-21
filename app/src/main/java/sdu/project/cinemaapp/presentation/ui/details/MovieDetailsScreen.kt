@@ -249,7 +249,7 @@ fun MovieContent(
                 Text(
                     text = movie.shortDescription
                         ?: MockData.shortDescription,
-                        style = TextStyle(
+                    style = TextStyle(
                         fontSize = 20.sp,
                         lineHeight = 22.sp,
                         fontFamily = FontFamily(Font(R.font.graphikbold)),
@@ -260,7 +260,7 @@ fun MovieContent(
                 Text(
                     text = movie.description
                         ?: MockData.description,
-                        style = TextStyle(
+                    style = TextStyle(
                         fontSize = 17.sp,
                         lineHeight = 22.sp,
                         fontFamily = FontFamily(Font(R.font.graphikregular)),
@@ -270,38 +270,60 @@ fun MovieContent(
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(14.dp))
-                Header("В фильме снимались", actors.size) {
-                    sharedViewModel.setDataList(actors)
-                    viewModel.event(navController, MovieDetailsEvent.NavigateToList("В фильме снимались"))
+                val filteredActor = actors.filter { it.nameRu != "" }
+                if (filteredActor.isNotEmpty()) {
+                    Header("В фильме снимались", filteredActor.size) {
+                        sharedViewModel.setDataList(filteredActor)
+                        viewModel.event(
+                            navController,
+                            MovieDetailsEvent.NavigateToList("В фильме снимались")
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(14.dp))
+                    StaffListView(staffs = filteredActor, 4) {
+                        viewModel.event(navController, it)
+                    }
                 }
+
                 Spacer(modifier = Modifier.height(14.dp))
-                StaffListView(staffs = actors, 4) {
-                    viewModel.event(navController, it)
+                val filteredStaffs = staff.filter { it.nameRu != "" }
+                if (filteredStaffs.isNotEmpty()) {
+                    Header("Над фильмом работали", filteredStaffs.size) {
+                        sharedViewModel.setDataList(filteredStaffs)
+                        viewModel.event(
+                            navController,
+                            MovieDetailsEvent.NavigateToList("Над фильмом работали")
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(14.dp))
+                    StaffListView(staffs = filteredStaffs, countItem = 2) {
+                        viewModel.event(navController, it)
+                    }
                 }
+
                 Spacer(modifier = Modifier.height(14.dp))
-                Header("Над фильмом работали", staff.size) {
-                    sharedViewModel.setDataList(staff)
-                    viewModel.event(navController, MovieDetailsEvent.NavigateToList("Над фильмом работали"))
+                if (images.isNotEmpty()) {
+                    Header("Галерея", images.size) {
+                        sharedViewModel.setDataList(images)
+                        navController.navigate("gallery_screen")
+                    }
+                    Spacer(modifier = Modifier.height(14.dp))
+                    ListImages(images = images)
                 }
+
                 Spacer(modifier = Modifier.height(14.dp))
-                StaffListView(staffs = staff, countItem = 2) {
-                    viewModel.event(navController, it)
-                }
-                Spacer(modifier = Modifier.height(14.dp))
-                Header("Галерея", images.size) {
-                    sharedViewModel.setDataList(images)
-                    navController.navigate("gallery_screen")
-                }
-                Spacer(modifier = Modifier.height(14.dp))
-                ListImages(images = images)
-                Spacer(modifier = Modifier.height(14.dp))
-                Header("Похожие фильмы", similarFilms.size) {
-                    sharedViewModel.setDataList(similarFilms)
-                    viewModel.event(navController, MovieDetailsEvent.NavigateToList("Похожие фильмы"))
-                }
-                Spacer(modifier = Modifier.height(14.dp))
-                SimilarMoviesList(similarFilms) {
-                    viewModel.event(navController, it)
+                if (similarFilms.isNotEmpty()) {
+                    Header("Похожие фильмы", similarFilms.size) {
+                        sharedViewModel.setDataList(similarFilms)
+                        viewModel.event(
+                            navController,
+                            MovieDetailsEvent.NavigateToList("Похожие фильмы")
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(14.dp))
+                    SimilarMoviesList(similarFilms) {
+                        viewModel.event(navController, it)
+                    }
                 }
                 Spacer(modifier = Modifier.height(30.dp))
             }
@@ -418,13 +440,13 @@ fun ListImages(images: List<MovieImage>) {
     }
 }
 
-
 @Composable
 fun StaffListView(
     staffs: List<FilmStaff>,
     countItem: Int,
     onClick: (event: MovieDetailsEvent) -> Unit
 ) {
+
     if (staffs.isNotEmpty()) {
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
@@ -434,9 +456,11 @@ fun StaffListView(
             items(staffs.chunked(countItem)) { item ->
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     item.forEach { staff ->
-                        StaffItem(staff = staff) {
-                            Log.i("StaffItem", "StaffItem: $staff")
-                            onClick(MovieDetailsEvent.LoadStaff(staff.staffId))
+                        if (staff.nameRu != ""){
+                            StaffItem(staff = staff) {
+                                Log.i("StaffItem", "StaffItem: $staff")
+                                onClick(MovieDetailsEvent.LoadStaff(staff.staffId))
+                            }
                         }
                     }
                 }
@@ -450,7 +474,7 @@ fun StaffListView(
 fun StaffItem(staff: FilmStaff, onClick: (Int) -> Unit) {
     Row(
         modifier = Modifier
-            .height(68.dp)
+            .height(75.dp)
             .clickable {
                 onClick(staff.staffId)
             },
@@ -461,7 +485,7 @@ fun StaffItem(staff: FilmStaff, onClick: (Int) -> Unit) {
             model = staff.posterUrl,
             modifier = Modifier.fillMaxHeight(),
             contentDescription = null,
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.FillHeight
         )
         Column {
             Text(
