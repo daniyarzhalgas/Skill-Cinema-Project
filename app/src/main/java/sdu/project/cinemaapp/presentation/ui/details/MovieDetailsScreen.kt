@@ -162,7 +162,7 @@ fun MovieContent(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = movie.ratingKinopoisk.toString() + " " + movie.nameRu.split(':')[0],
+                        text = movie.ratingKinopoisk.toString() + " " + (movie.nameRu?.split(':')?.get(0) ?: "name not passed"),
                         style = TextStyle(
                             fontSize = 14.sp,
                             fontFamily = FontFamily(Font(R.font.graphikmedium)),
@@ -172,7 +172,8 @@ fun MovieContent(
                     )
                     Spacer(modifier = Modifier.height(14.dp))
                     Text(
-                        text = movie.year.toString() + ", " + movie.genres.joinToString(", ") { it.genre },
+                        text = movie.year.toString() + ", " + (movie.genres?.joinToString(", ") { it.genre }
+                            ?: "no genres"),
                         color = Color.White,
                         style = TextStyle(
                             fontSize = 14.sp,
@@ -182,12 +183,12 @@ fun MovieContent(
                         )
                     )
                     Spacer(modifier = Modifier.height(14.dp))
-                    val hour = (movie.filmLength / 60).toString() + " ч"
-                    val minute = (movie.filmLength % 60).toString() + " мин"
+                    val hour = (movie.filmLength?.div(60)).toString() + " ч"
+                    val minute = (movie.filmLength?.rem(60)).toString() + " мин"
                     Text(
-                        text = movie.countries.joinToString(", ") { it.country } + ", " + hour + " " + minute + "," + movie.ratingAgeLimits.substring(
+                        text = (movie.countries?.joinToString(", ") { it.country } ?: "") + ", " + hour + " " + minute + "," + (movie.ratingAgeLimits?.substring(
                             3
-                        ) + "+",
+                        ) ?: "") + "+",
                         color = Color.White,
                         style = TextStyle(
                             fontSize = 14.sp,
@@ -202,7 +203,7 @@ fun MovieContent(
                             contentDescription = "", modifier = Modifier
                                 .size(34.dp)
                                 .padding(8.dp)
-                                .clickable { }
+                                .clickable { TODO() }
                         )
 
                         Image(
@@ -211,7 +212,7 @@ fun MovieContent(
                             modifier = Modifier
                                 .size(34.dp)
                                 .padding(8.dp)
-                                .clickable { }
+                                .clickable { TODO() }
                         )
 
                         Image(
@@ -220,7 +221,7 @@ fun MovieContent(
                             modifier = Modifier
                                 .size(34.dp)
                                 .padding(8.dp)
-                                .clickable { }
+                                .clickable { TODO() }
                         )
 
                         Image(
@@ -229,7 +230,7 @@ fun MovieContent(
                             modifier = Modifier
                                 .size(34.dp)
                                 .padding(8.dp)
-                                .clickable { }
+                                .clickable { TODO() }
                         )
 
                         Image(
@@ -238,7 +239,7 @@ fun MovieContent(
                             modifier = Modifier
                                 .size(34.dp)
                                 .padding(8.dp)
-                                .clickable { }
+                                .clickable { TODO() }
                         )
 
                     }

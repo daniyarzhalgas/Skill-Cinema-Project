@@ -109,23 +109,25 @@ fun ListObjectsLayout(
 
                 when (obj) {
                     is Movie -> {
-                        ItemCard(obj.kinopoiskId, obj.posterUrlPreview, obj.ratingKinopoisk, obj.nameRu, obj.genres, null) {
-                            onEvent(ListObjectsEvent.OnMovieClick(obj.kinopoiskId))
+                        obj.posterUrlPreview?.let {
+                            obj.nameRu?.let { it1 ->
+                                ItemCard(obj.kinopoiskId,
+                                    it, obj.ratingKinopoisk, it1, obj.genres, null) {
+                                    onEvent(ListObjectsEvent.OnMovieClick(obj.kinopoiskId))
+                                }
+                            }
                         }
-                        Log.d("ListObjectsScreen", "obj: $obj")
                     }
 
                     is SimilarMovie -> {
                         ItemCard(obj.filmId, obj.posterUrlPreview, null, obj.nameRu, null, null) {
                             onEvent(ListObjectsEvent.OnMovieClick(obj.filmId))
                         }
-                        Log.d("ListObjectsScreen", "obj: $obj")
                     }
 
                     is FilmStaff -> {ItemCard(obj.staffId, obj.posterUrl, null, obj.nameRu, null, obj.professionKey) {
                         onEvent(ListObjectsEvent.OnActorClick(obj.staffId))
                     }
-                        Log.d("ListObjectsScreen", "obj: $obj")
                     }
                 }
            }

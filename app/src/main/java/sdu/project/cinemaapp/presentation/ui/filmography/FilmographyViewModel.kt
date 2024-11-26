@@ -28,7 +28,6 @@ class FilmographyViewModel @Inject constructor(
     private val actor: Actor = sharedViewModel.getDataOfType<Actor>()
 
     init {
-        // Загрузка фильмов по первой доступной профессии
         actor.films.firstOrNull()?.professionKey?.let {
             loadMoviesByProfessionKey(it)
         }
@@ -48,7 +47,6 @@ class FilmographyViewModel @Inject constructor(
             }
         }
     }
-
     private fun loadMoviesByProfessionKey(professionKey: String) {
         _state.value = ScreenState.Loading
         viewModelScope.launch {
@@ -57,7 +55,9 @@ class FilmographyViewModel @Inject constructor(
                     it.professionKey == professionKey
                 }
 
-                val allMovies = sharedViewModel.selectedMovies.value.distinctBy { it.kinopoiskId }
+                val allMovies = sharedViewModel.selectedMovies.value
+
+                Log.i("allMovies", "List ${allMovies}")
 
                 val filteredMovies = allMovies.filter { movie ->
                     movie.kinopoiskId in moviesByProfession.map { it.filmId }

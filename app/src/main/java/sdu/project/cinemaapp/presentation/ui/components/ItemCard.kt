@@ -3,6 +3,7 @@ package sdu.project.cinemaapp.presentation.ui.components
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -36,7 +38,6 @@ fun ItemCard(
     profession: String?,
     onClick: (Int) -> Unit
 ){
-    Log.d("ItemCard", "id: $id")
     Column(
         modifier = Modifier
             .padding(end = 8.dp)
@@ -44,16 +45,18 @@ fun ItemCard(
                 onClick(id)
             }
             .wrapContentWidth()
-            .width(111.dp)
-            .height(194.dp)
+            .width(131.dp)
+            .height(235.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box{
             AsyncImage(
                 model = posterUrl,
                 contentDescription = null,
                 modifier = Modifier
-                    .height(150.dp)
+                    .height(180.dp)
                     .fillMaxWidth()
+                    .clip(RoundedCornerShape(5.dp))
             )
             Box(
                 modifier = Modifier
@@ -79,38 +82,40 @@ fun ItemCard(
             }
 
         }
-        Text(
-            text = nameRu,
-            modifier = Modifier.padding(top = 8.dp).width(100.dp),
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            style = TextStyle(
-                fontSize = 14.sp,
-                fontFamily = FontFamily(Font(R.font.graphikregular)),
-                color = Color(0xFF272727)
-            )
-        )
-        genres?.let{
+        Column {
             Text(
-                text = genres.firstOrNull()?.genre ?: "No genre",
-                modifier = Modifier.padding(top = 2.dp),
+                text = nameRu,
+                modifier = Modifier.padding(top = 8.dp).width(120.dp),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
                 style = TextStyle(
-                    fontSize = 12.sp,
+                    fontSize = 14.sp,
                     fontFamily = FontFamily(Font(R.font.graphikregular)),
-                    color = Color(0xFF838390)
+                    color = Color(0xFF272727)
                 )
             )
-        }
-        profession?.let{
-            Text(
-                text = profession,
-                modifier = Modifier.padding(top = 2.dp),
-                style = TextStyle(
-                    fontSize = 12.sp,
-                    fontFamily = FontFamily(Font(R.font.graphikregular)),
-                    color = Color(0xFF838390)
+            genres?.let {
+                Text(
+                    text = genres.firstOrNull()?.genre ?: "No genre",
+                    modifier = Modifier.padding(top = 2.dp),
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily(Font(R.font.graphikregular)),
+                        color = Color(0xFF838390)
+                    )
                 )
-            )
+            }
+            profession?.let {
+                Text(
+                    text = profession,
+                    modifier = Modifier.padding(top = 2.dp),
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        fontFamily = FontFamily(Font(R.font.graphikregular)),
+                        color = Color(0xFF838390)
+                    )
+                )
+            }
         }
     }
 }

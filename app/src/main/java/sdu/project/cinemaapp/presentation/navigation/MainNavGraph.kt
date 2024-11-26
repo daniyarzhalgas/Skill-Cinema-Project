@@ -10,7 +10,7 @@ import androidx.navigation.compose.composable
 import sdu.project.cinemaapp.presentation.navigation.BottomBarNavigation
 import sdu.project.cinemaapp.presentation.ui.actor.ActorScreen
 import sdu.project.cinemaapp.presentation.ui.components.BottomBar
-import sdu.project.cinemaapp.presentation.ui.screens.ProfileScreen
+import sdu.project.cinemaapp.presentation.ui.profile.ProfileScreen
 import sdu.project.cinemaapp.presentation.ui.screens.SearchScreen
 import sdu.project.cinemaapp.presentation.ui.home.HomeScreen
 import sdu.project.cinemaapp.presentation.ui.details.MovieDetailsScreen

@@ -251,16 +251,18 @@ fun FilmItem(movie: Movie, onClick: (Int) -> Unit) {
             contentScale = ContentScale.Crop
         )
         Column {
-            Text(
-                text = movie.nameRu,
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    fontFamily = FontFamily(Font(R.font.graphikregular)),
-                    color = Color(0xFF272727),
+            movie.nameRu?.let {
+                Text(
+                    text = it,
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.graphikregular)),
+                        color = Color(0xFF272727),
+                    )
                 )
-            )
+            }
             Text(
-                text = movie.genres.firstOrNull()?.genre ?: "no genre",
+                text = movie.genres?.firstOrNull()?.genre ?: "no genre",
                 style = TextStyle(
                     fontSize = 12.sp,
                     fontFamily = FontFamily(Font(R.font.graphikregular)),

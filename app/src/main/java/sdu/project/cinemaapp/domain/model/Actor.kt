@@ -1,6 +1,11 @@
 package sdu.project.cinemaapp.domain.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "actors")
 data class Actor (
+    @PrimaryKey
     val personId: Int,
     val webUrl: String,
     val nameRu: String,

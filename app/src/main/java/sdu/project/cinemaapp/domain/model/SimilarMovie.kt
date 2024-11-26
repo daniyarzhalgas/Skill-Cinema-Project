@@ -1,6 +1,11 @@
 package sdu.project.cinemaapp.domain.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
 data class SimilarMovie(
+    @PrimaryKey
     val filmId: Int,
     val nameRu: String,
     val nameEn: String,

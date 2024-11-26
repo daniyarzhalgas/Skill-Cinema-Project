@@ -18,7 +18,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import sdu.project.cinemaapp.R
-import sdu.project.cinemaapp.presentation.navigation.BottomBarNavigation
 import sdu.project.cinemaapp.presentation.state.ScreenState
 import sdu.project.cinemaapp.presentation.ui.components.HomeLazyRowListComponent
 import sdu.project.cinemaapp.presentation.ui.screens.ErrorScreen

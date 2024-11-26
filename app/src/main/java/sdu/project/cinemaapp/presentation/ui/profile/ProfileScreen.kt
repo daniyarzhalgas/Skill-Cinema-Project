@@ -1,6 +1,6 @@
-package sdu.project.cinemaapp.presentation.ui.screens
+package sdu.project.cinemaapp.presentation.ui.profile
 
-import android.widget.Space
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,15 +20,15 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,18 +38,30 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.HiltViewModelFactory
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
 import sdu.project.cinemaapp.R
 import sdu.project.cinemaapp.domain.model.Movie
+import sdu.project.cinemaapp.presentation.state.ScreenState
 import sdu.project.cinemaapp.presentation.ui.components.ItemCard
-import sdu.project.cinemaapp.presentation.ui.home.HomeEvent
+import sdu.project.cinemaapp.presentation.ui.screens.ErrorScreen
+import sdu.project.cinemaapp.presentation.ui.screens.LoaderScreen
+import kotlin.math.log
 
 
-@Preview(showBackground = true)
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(
+    viewModel: ProfileViewModel = hiltViewModel()
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val movies by viewModel.watched.collectAsStateWithLifecycle()
+
+
     Column(
         modifier = Modifier
             .padding(horizontal = 26.dp, vertical = 56.dp)
@@ -88,7 +100,16 @@ fun ProfileScreen() {
         }
 
         // todo fetching movies
-//        ListMovies(movies = )
+
+        when(state){
+            ScreenState.Initial -> {}
+            ScreenState.Error -> ErrorScreen()
+            ScreenState.Loading -> LoaderScreen()
+            ScreenState.Success -> {
+                ListMovies(movies = movies )
+            }
+        }
+//
 
         Spacer(modifier = Modifier.height(36.dp))
         Text(
@@ -109,10 +130,11 @@ fun ProfileScreen() {
             Icon(
                 imageVector = Icons.Filled.Add,
                 contentDescription = "Delete",
-                modifier = Modifier.size(24.dp)
-                .clickable {
-                    //todo navigate to create collection
-                }
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable {
+                        //todo navigate to create collection
+                    }
             )
 
             Text(
@@ -184,8 +206,7 @@ fun CollectionCard(image: Int, title: String, count: Int) {
                         color = Color(0xFF3D3BFF),
                         shape = RoundedCornerShape(size = 16.dp)
                     )
-                    .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
-                    ,
+                    .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -205,20 +226,23 @@ fun CollectionCard(image: Int, title: String, count: Int) {
 
 @Composable
 fun ListMovies(movies: List<Movie>) {
+    Log.i("ListMovies", "${movies[0]}")
     LazyRow {
         item {
             Spacer(Modifier.width(30.dp))
         }
         items(movies.take(10)) { movie ->
-            ItemCard(
-                movie.kinopoiskId,
-                movie.posterUrlPreview,
-                movie.ratingKinopoisk,
-                movie.nameRu,
-                movie.genres,
-                null
-            ) {
-//                onEvent(HomeEvent.OnItemClick(movie.kinopoiskId))
+            movie.posterUrlPreview?.let {
+                    ItemCard(
+                        movie.kinopoiskId,
+                        it,
+                        movie.ratingKinopoisk,
+                        movie.nameRu ?:"Null",
+                        movie.genres,
+                        null
+                    ) {
+
+                    }
             }
         }
         item {
@@ -234,7 +258,7 @@ fun ListMovies(movies: List<Movie>) {
             ) {
 
                 Button(
-                    onClick = {  },
+                    onClick = { },
                     modifier = Modifier
                         .size(50.dp),
                     colors = ButtonDefaults.buttonColors(

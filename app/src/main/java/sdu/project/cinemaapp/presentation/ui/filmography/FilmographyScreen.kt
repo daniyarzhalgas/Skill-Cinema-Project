@@ -64,7 +64,6 @@ fun FilmographyScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val filmography by viewModel.filmography.collectAsStateWithLifecycle()
 
-    // Получаем объект Actor из sharedViewModel
     val actor = sharedViewModel.getDataOfType<Actor>()
 
 
@@ -103,7 +102,6 @@ fun FilmographyScreen(
             )
         )
         Spacer(modifier = Modifier.height(20.dp))
-        // Отображение фильмов по профессиям
         var isClicked by remember { mutableStateOf(0) }
         LazyRow(
             modifier = Modifier,
@@ -132,7 +130,7 @@ fun FilmographyScreen(
                     ) else BorderStroke(1.dp, Color.Black),
 
                     ) {
-                    val profession = profession.replace("_", " ")
+                    val profession = profession.toLowerCase().replace("_", " ")
                     Text(
                         text = profession.replaceFirstChar { it.uppercase() },
                         style = TextStyle(
@@ -147,7 +145,6 @@ fun FilmographyScreen(
         }
         Spacer(modifier = Modifier.height(30.dp))
 
-        // Отображение списка фильмов по выбранной профессии
         when (state) {
             is ScreenState.Initial -> {}
             is ScreenState.Loading -> {
@@ -173,6 +170,9 @@ fun FilmographyScreen(
     filmography: List<Movie>,
     onItemClick: (Int) -> Unit
 ) {
+    if(filmography.isEmpty()){
+        Text(text = "Фильмы не найдены")
+    }
     LazyColumn(
         modifier = Modifier,
         verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -199,6 +199,7 @@ fun MovieItem(movie: Movie, onItemClick: () -> Unit) {
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(100.dp)
+                    .clip(RoundedCornerShape(10.dp))
             )
 
             Box(
@@ -224,7 +225,7 @@ fun MovieItem(movie: Movie, onItemClick: () -> Unit) {
         }
         Column(
             modifier = Modifier.fillMaxHeight(),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
             Text(
                 text = movie.nameRu ?: "Нет названия",
@@ -236,7 +237,7 @@ fun MovieItem(movie: Movie, onItemClick: () -> Unit) {
             )
             Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = movie.year.toString() + ", " + movie.genres.joinToString { it.genre },
+                text = movie.year.toString() + ", " + (movie.genres?.joinToString { it.genre } ?: "no passed genres"),
                 style = TextStyle(
                     fontSize = 14.sp,
                     fontFamily = FontFamily(Font(R.font.graphikregular)),
