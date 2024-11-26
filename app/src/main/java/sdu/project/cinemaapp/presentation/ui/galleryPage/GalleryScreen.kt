@@ -101,7 +101,7 @@ fun GalleryScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             itemsIndexed(images.chunked(2)) { index, imageRow ->
-                if (index % 2 == 0) {
+                if (index % 2 != 0) {
                     AsyncImage(
                         model = imageRow[0].imageUrl,
                         contentDescription = "",
