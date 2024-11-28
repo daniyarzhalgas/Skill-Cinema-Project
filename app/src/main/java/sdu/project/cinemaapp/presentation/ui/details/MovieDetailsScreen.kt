@@ -181,7 +181,8 @@ fun MovieContent(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = movie.ratingKinopoisk.toString() + " " + (movie.nameRu?.split(':')?.get(0) ?: "name not passed"),
+                        text = movie.ratingKinopoisk.toString() + " " + (movie.nameRu?.split(':')
+                            ?.get(0) ?: "name not passed"),
                         style = TextStyle(
                             fontSize = 14.sp,
                             fontFamily = FontFamily(Font(R.font.graphikmedium)),
@@ -205,7 +206,8 @@ fun MovieContent(
                     val hour = (movie.filmLength?.div(60)).toString() + " ч"
                     val minute = (movie.filmLength?.rem(60)).toString() + " мин"
                     Text(
-                        text = (movie.countries?.joinToString(", ") { it.country } ?: "") + ", " + hour + " " + minute + "," + (movie.ratingAgeLimits?.substring(
+                        text = (movie.countries?.joinToString(", ") { it.country }
+                            ?: "") + ", " + hour + " " + minute + "," + (movie.ratingAgeLimits?.substring(
                             3
                         ) ?: "") + "+",
                         color = Color.White,
@@ -440,12 +442,14 @@ fun BottomSheet(movie: Movie?) {
                 )
             )
         }
+        var isExpanded by remember { mutableStateOf(false) }
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(40.dp)
                 .clickable {
+                    isExpanded = !isExpanded
                     //todo Добавить в коллецию
                 }
                 .border(width = 1.dp, color = Color(0x4DB5B5C9))
@@ -468,126 +472,126 @@ fun BottomSheet(movie: Movie?) {
                 )
             )
         }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-        {
-            Row(
+        if (isExpanded) {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(40.dp)
-                    .border(width = 1.dp, color = Color(0x4DB5B5C9))
-                    .padding(horizontal = 30.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Spacer(modifier = Modifier.width(20.dp))
-                var checked by remember { mutableStateOf(false) }
+            )
+            {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                        .border(width = 1.dp, color = Color(0x4DB5B5C9))
+                        .padding(horizontal = 30.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Spacer(modifier = Modifier.width(20.dp))
+                    var checked by remember { mutableStateOf(false) }
 
-                Checkbox(
-                    checked = checked,
-                    onCheckedChange = { checked = it },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = Color.Black,
-                        uncheckedColor = Color.Gray,
-                        checkmarkColor = Color.White
+                    Checkbox(
+                        checked = checked,
+                        onCheckedChange = { checked = it },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = Color.Black,
+                            uncheckedColor = Color.Gray,
+                            checkmarkColor = Color.White
+                        )
                     )
-                )
-                Text(
-                    text = "Русское кино",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(Font(R.font.graphikregular)),
-                        color = Color(0xFF272727),
-                        textAlign = TextAlign.Center,
+                    Text(
+                        text = "Русское кино",
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            fontFamily = FontFamily(Font(R.font.graphikregular)),
+                            color = Color(0xFF272727),
+                            textAlign = TextAlign.Center,
+                        )
                     )
-                )
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(40.dp)
-                    .border(width = 1.dp, color = Color(0x4DB5B5C9))
-                    .padding(horizontal = 30.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Spacer(modifier = Modifier.width(20.dp))
-                var checked by remember { mutableStateOf(false) }
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                        .border(width = 1.dp, color = Color(0x4DB5B5C9))
+                        .padding(horizontal = 30.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Spacer(modifier = Modifier.width(20.dp))
+                    var checked by remember { mutableStateOf(false) }
 
-                Checkbox(
-                    checked = checked,
-                    onCheckedChange = { checked = it },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = Color.Black,
-                        uncheckedColor = Color.Gray,
-                        checkmarkColor = Color.White
+                    Checkbox(
+                        checked = checked,
+                        onCheckedChange = { checked = it },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = Color.Black,
+                            uncheckedColor = Color.Gray,
+                            checkmarkColor = Color.White
+                        )
                     )
-                )
-                Text(
-                    text = "Хочу посмотреть",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(Font(R.font.graphikregular)),
-                        color = Color(0xFF272727),
-                        textAlign = TextAlign.Center,
+                    Text(
+                        text = "Хочу посмотреть",
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            fontFamily = FontFamily(Font(R.font.graphikregular)),
+                            color = Color(0xFF272727),
+                            textAlign = TextAlign.Center,
+                        )
                     )
-                )
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(40.dp)
-                    .border(width = 1.dp, color = Color(0x4DB5B5C9))
-                    .padding(horizontal = 30.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Spacer(modifier = Modifier.width(20.dp))
-                var checked by remember { mutableStateOf(false) }
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                        .border(width = 1.dp, color = Color(0x4DB5B5C9))
+                        .padding(horizontal = 30.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Spacer(modifier = Modifier.width(20.dp))
+                    var checked by remember { mutableStateOf(false) }
 
-                Checkbox(
-                    checked = checked,
-                    onCheckedChange = { checked = it },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = Color.Black,
-                        uncheckedColor = Color.Gray,
-                        checkmarkColor = Color.White
+                    Checkbox(
+                        checked = checked,
+                        onCheckedChange = { checked = it },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = Color.Black,
+                            uncheckedColor = Color.Gray,
+                            checkmarkColor = Color.White
+                        )
                     )
-                )
-                Text(
-                    text = "Любимое",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(Font(R.font.graphikregular)),
-                        color = Color(0xFF272727),
-                        textAlign = TextAlign.Center,
+                    Text(
+                        text = "Любимое",
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            fontFamily = FontFamily(Font(R.font.graphikregular)),
+                            color = Color(0xFF272727),
+                            textAlign = TextAlign.Center,
+                        )
                     )
-                )
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(40.dp)
-                    .border(width = 1.dp, color = Color(0x4DB5B5C9))
-                    .clickable {
-                        //todo create collection
-                    },
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Spacer(modifier = Modifier.width(61.dp))
-                Icon(imageVector = Icons.Filled.Add, contentDescription = null)
-                Text(
-                    text = "Создать свою коллекцию",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        fontFamily = FontFamily(Font(R.font.graphikregular)),
-                        color = Color(0xFF272727),
-                        textAlign = TextAlign.Center,
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                        .border(width = 1.dp, color = Color(0x4DB5B5C9))
+                        .clickable {
+                            //todo create collection
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Spacer(modifier = Modifier.width(61.dp))
+                    Icon(imageVector = Icons.Filled.Add, contentDescription = null)
+                    Text(
+                        text = "Создать свою коллекцию",
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            fontFamily = FontFamily(Font(R.font.graphikregular)),
+                            color = Color(0xFF272727),
+                            textAlign = TextAlign.Center,
+                        )
                     )
-                )
+                }
             }
         }
-
-
     }
 }
 
@@ -716,7 +720,7 @@ fun StaffListView(
             items(staffs.chunked(countItem)) { item ->
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     item.forEach { staff ->
-                        if (staff.nameRu != ""){
+                        if (staff.nameRu != "") {
                             StaffItem(staff = staff) {
                                 Log.i("StaffItem", "StaffItem: $staff")
                                 onClick(MovieDetailsEvent.LoadStaff(staff.staffId))
