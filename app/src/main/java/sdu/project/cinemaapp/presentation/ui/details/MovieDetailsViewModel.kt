@@ -74,21 +74,9 @@ class MovieDetailsViewModel @Inject constructor(
                 navController.navigate("list_screen/${event.title}")
             }
 
-            is MovieDetailsEvent.UpdateWatchedStatus -> {
-                updateWatchedStatus(event.updatedMovie)
-            }
         }
     }
 
-    private fun updateWatchedStatus(movie: Movie) {
-
-        viewModelScope.launch {
-            if (movie.isWatched)
-                moviesRepository.setMovie(movie)
-            else
-                moviesRepository.deleteWatched(movie)
-        }
-    }
 
     private fun fetchAllMovieDetails(id: Int) {
         viewModelScope.launch {

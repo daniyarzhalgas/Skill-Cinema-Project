@@ -3,7 +3,6 @@ package sdu.project.cinemaapp.presentation.ui.details
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,14 +20,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -40,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -64,6 +56,7 @@ import sdu.project.cinemaapp.domain.model.MovieImage
 import sdu.project.cinemaapp.domain.model.Movie
 import sdu.project.cinemaapp.domain.model.SimilarMovie
 import sdu.project.cinemaapp.presentation.state.ScreenState
+import sdu.project.cinemaapp.presentation.ui.bottomSheet.BottomSheetScreen
 import sdu.project.cinemaapp.presentation.ui.screens.ErrorScreen
 import sdu.project.cinemaapp.presentation.ui.screens.LoaderScreen
 import sdu.project.cinemaapp.presentation.viewModel.SharedViewModel
@@ -354,255 +347,12 @@ fun MovieContent(
                 sheetState = sheetState,
                 modifier = Modifier.height(500.dp)
             ) {
-                BottomSheet(movie) {
-                    viewModel.event(navController, it)
-                }
+                BottomSheetScreen(movie!!.kinopoiskId)
             }
         }
     }
 }
 
-@Composable
-fun BottomSheet(movie: Movie?, onClick: (MovieDetailsEvent) -> Unit) {
-
-    if (movie == null) {
-        Text("Нет данных о фильме", style = TextStyle(color = Color.Red))
-        return
-    }
-    var isExpanded by remember { mutableStateOf(false) }
-    var isWatched by remember { mutableStateOf(movie.isWatched) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(20.dp),
-            modifier = Modifier
-                .height(132.dp)
-                .padding(horizontal = 20.dp),
-        ) {
-            AsyncImage(
-                model = movie.posterUrl,
-                contentDescription = null,
-                modifier = Modifier
-                    .width(96.dp)
-                    .height(132.dp)
-                    .clip(RoundedCornerShape(10.dp)),
-                contentScale = ContentScale.Crop,
-            )
-            Column(
-                modifier = Modifier.fillMaxHeight(),
-                verticalArrangement = Arrangement.Center
-            ) {
-                movie.nameRu?.let {
-                    Text(
-                        text = it,
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            fontFamily = FontFamily(Font(R.font.graphiksemibold)),
-                            color = Color(0xFF272727),
-                        )
-                    )
-                }
-                Text(
-                    text = movie.year.toString() + ", " + (movie.genres?.firstOrNull()?.genre
-                        ?: "no genres"),
-                    style = TextStyle(
-                        fontSize = 12.sp,
-                        fontFamily = FontFamily(Font(R.font.graphikregular)),
-                        color = Color(0xFF838390),
-                    )
-                )
-            }
-        }
-
-
-        Spacer(modifier = Modifier.height(20.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(40.dp)
-                .clickable {
-                    isWatched = !isWatched
-                    onClick(MovieDetailsEvent.UpdateWatchedStatus(movie.copy(isWatched = isWatched)))
-                }
-                .border(width = 1.dp, color = Color(0x4DB5B5C9))
-                .padding(horizontal = 30.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            Image(
-                painter = painterResource(
-                    if (isWatched) R.drawable.eye else R.drawable.eye_black
-                ),
-                contentDescription = "", modifier = Modifier
-                    .size(20.dp)
-            )
-            Text(
-                text = "Просмотрен",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily(Font(R.font.graphikregular)),
-                    color = Color(0xFF272727),
-                    textAlign = TextAlign.Center,
-                )
-            )
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(40.dp)
-                .clickable {
-                    isExpanded = !isExpanded
-                    //todo Добавить в коллецию
-                }
-                .border(width = 1.dp, color = Color(0x4DB5B5C9))
-                .padding(horizontal = 30.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(20.dp)
-        ) {
-            Image(
-                painter = painterResource(R.drawable.create_collection_icon),
-                contentDescription = "", modifier = Modifier
-                    .size(20.dp)
-            )
-            Text(
-                text = "Добавить в коллецию",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontFamily = FontFamily(Font(R.font.graphikregular)),
-                    color = Color(0xFF272727),
-                    textAlign = TextAlign.Center,
-                )
-            )
-        }
-        if (isExpanded) {
-
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-            {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(40.dp)
-                        .border(width = 1.dp, color = Color(0x4DB5B5C9))
-                        .padding(horizontal = 30.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Spacer(modifier = Modifier.width(20.dp))
-                    var checked by remember { mutableStateOf(false) }
-
-                    Checkbox(
-                        checked = checked,
-                        onCheckedChange = { checked = it },
-                        colors = CheckboxDefaults.colors(
-                            checkedColor = Color.Black,
-                            uncheckedColor = Color.Gray,
-                            checkmarkColor = Color.White
-                        )
-                    )
-                    Text(
-                        text = "Русское кино",
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            fontFamily = FontFamily(Font(R.font.graphikregular)),
-                            color = Color(0xFF272727),
-                            textAlign = TextAlign.Center,
-                        )
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(40.dp)
-                        .border(width = 1.dp, color = Color(0x4DB5B5C9))
-                        .padding(horizontal = 30.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Spacer(modifier = Modifier.width(20.dp))
-                    var checked by remember { mutableStateOf(false) }
-
-                    Checkbox(
-                        checked = checked,
-                        onCheckedChange = { checked = it },
-                        colors = CheckboxDefaults.colors(
-                            checkedColor = Color.Black,
-                            uncheckedColor = Color.Gray,
-                            checkmarkColor = Color.White
-                        )
-                    )
-                    Text(
-                        text = "Хочу посмотреть",
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            fontFamily = FontFamily(Font(R.font.graphikregular)),
-                            color = Color(0xFF272727),
-                            textAlign = TextAlign.Center,
-                        )
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(40.dp)
-                        .border(width = 1.dp, color = Color(0x4DB5B5C9))
-                        .padding(horizontal = 30.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Spacer(modifier = Modifier.width(20.dp))
-                    var checked by remember { mutableStateOf(false) }
-
-                    Checkbox(
-                        checked = checked,
-                        onCheckedChange = { checked = it },
-                        colors = CheckboxDefaults.colors(
-                            checkedColor = Color.Black,
-                            uncheckedColor = Color.Gray,
-                            checkmarkColor = Color.White
-                        )
-                    )
-                    Text(
-                        text = "Любимое",
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            fontFamily = FontFamily(Font(R.font.graphikregular)),
-                            color = Color(0xFF272727),
-                            textAlign = TextAlign.Center,
-                        )
-                    )
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(40.dp)
-                        .border(width = 1.dp, color = Color(0x4DB5B5C9))
-                        .clickable {
-                            //todo create collection
-                        },
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Spacer(modifier = Modifier.width(61.dp))
-                    Icon(imageVector = Icons.Filled.Add, contentDescription = null)
-                    Text(
-                        text = "Создать свою коллекцию",
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            fontFamily = FontFamily(Font(R.font.graphikregular)),
-                            color = Color(0xFF272727),
-                            textAlign = TextAlign.Center,
-                        )
-                    )
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun Header(headerText: String, size: Int, onClick: (String) -> Unit) {

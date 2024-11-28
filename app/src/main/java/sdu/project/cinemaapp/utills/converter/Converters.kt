@@ -33,13 +33,24 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromGenre(genre: Genre?):String? {
+    fun fromGenre(genre: Genre?): String? {
         return gson.toJson(genre)
     }
 
     @TypeConverter
-    fun toGenre(data: String?): Genre?{
+    fun toGenre(data: String?): Genre? {
         val type = object : TypeToken<Genre>() {}.type
+        return gson.fromJson(data, type)
+    }
+
+    @TypeConverter
+    fun fromStringList(list: List<String>?): String? {
+        return gson.toJson(list)
+    }
+
+    @TypeConverter
+    fun toStringList(data: String?): List<String>? {
+        val type = object  : TypeToken<List<String>>() {}.type
         return gson.fromJson(data, type)
     }
 }

@@ -3,6 +3,7 @@ package sdu.project.cinemaapp.presentation.ui.profile
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,21 +42,32 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun event(event: ProfileEvent) {
-            when(event){
-                is ProfileEvent.DeleteAllWatchedMovies -> {
-                    deleteAllWatchedMovies()
+    fun event(navController: NavHostController, event: ProfileEvent) {
+        when (event) {
+            is ProfileEvent.DeleteAllWatchedMovies -> {
+                deleteAllWatchedMovies()
+            }
+
+            is ProfileEvent.NavigateToMovie -> {
+                navController.navigate(
+                    "details/${event.id}"
+                ) {
+                    launchSingleTop
                 }
             }
+
+            is ProfileEvent.NavigateToListPage -> {
+                navController.navigate("list_screen/${event.title}")
+            }
+        }
     }
 
-    private fun deleteAllWatchedMovies(){
+    private fun deleteAllWatchedMovies() {
         viewModelScope.launch {
             rep.deleteAllWatchedMovies()
             fetchProfileData()
         }
     }
-
 
 
 }

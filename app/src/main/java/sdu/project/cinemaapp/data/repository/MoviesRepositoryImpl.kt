@@ -91,5 +91,13 @@ class MoviesRepositoryImpl @Inject constructor(
         db.movieDao().deleteMovie(movie)
     }
 
+    override suspend fun getMoviesByLiked(): List<Movie> {
+        return db.movieDao().getMoviesByLiked()
+    }
+
+    override suspend fun deleteFromLiked() {
+        TODO()
+    }
+
 
 }

@@ -30,11 +30,7 @@ fun MainNavGraph(
     ) {
 
         composable(BottomBarNavigation.Home.route) {
-            Scaffold(
-                bottomBar = { BottomBar(navController) }
-            ) {
-                HomeScreen(navController = navController)
-            }
+            HomeScreen(navController = navController)
         }
 
         composable("details/{id}") { backStackEntry ->
@@ -53,18 +49,11 @@ fun MainNavGraph(
         }
 
         composable(route = BottomBarNavigation.Search.route) {
-            Scaffold(
-                bottomBar = { BottomBar(navController) }
-            ) {
-                SearchScreen()
-            }
+            SearchScreen()
+
         }
         composable(route = BottomBarNavigation.Profile.route) {
-            Scaffold(
-                bottomBar = { BottomBar(navController) }
-            ) {
-                ProfileScreen()
-            }
+            ProfileScreen(navController)
         }
         composable("actor_details/{id}") { backStackEntry ->
             val actorId = backStackEntry.arguments?.getString("id")?.toIntOrNull()
@@ -75,7 +64,7 @@ fun MainNavGraph(
             }
         }
         composable("filmography") {
-                FilmographyScreen(navController)
+            FilmographyScreen(navController)
         }
         composable("gallery_screen") {
             GalleryScreen(navController)

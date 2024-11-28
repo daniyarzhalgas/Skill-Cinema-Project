@@ -21,10 +21,17 @@ interface MovieDao {
     suspend fun deleteMovie(movie: Movie)
 
 
+
     @Query("select * from movie where isWatched = 1")
     suspend fun getMoviesByWatched(): List<Movie>
 
     @Query("Update Movie set isWatched = 0 where  isWatched = 1")
     suspend fun deleteAllWatchedMovies()
+
+
+    @Query("Select * from Movie where collectionName = 'liked'")
+    suspend fun getMoviesByLiked() : List<Movie>
+
+
 
 }

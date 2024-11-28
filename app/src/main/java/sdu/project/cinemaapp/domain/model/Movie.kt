@@ -9,8 +9,6 @@ import androidx.room.PrimaryKey
         Index(value = ["id"]),
         Index(value = ["kinopoiskId"]),
         Index(value = ["isWatched"]),
-        Index(value = ["isFavorite"]),
-        Index(value = ["isMarked"]),
         Index(value = ["collectionName"])
     ]
 )
@@ -64,9 +62,7 @@ data class Movie(
     val completed: Boolean?,
     val professionKey: String?,
     var isWatched: Boolean = false,
-    var isFavorite: Boolean = false,
-    var isMarked: Boolean = false,
-    var collectionName: String?
+    var collectionName: List<String>?
 )
 
 

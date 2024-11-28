@@ -1,6 +1,5 @@
 package sdu.project.cinemaapp.presentation.ui.profile
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -42,18 +41,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import sdu.project.cinemaapp.R
 import sdu.project.cinemaapp.domain.model.Movie
 import sdu.project.cinemaapp.presentation.state.ScreenState
 import sdu.project.cinemaapp.presentation.ui.components.ItemCard
 import sdu.project.cinemaapp.presentation.ui.screens.ErrorScreen
 import sdu.project.cinemaapp.presentation.ui.screens.LoaderScreen
+import sdu.project.cinemaapp.presentation.viewModel.SharedViewModel
 
 
 @Composable
 fun ProfileScreen(
+    navController: NavHostController,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
+    val sharedViewModel: SharedViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val movies by viewModel.watched.collectAsStateWithLifecycle()
 
@@ -73,16 +76,16 @@ fun ProfileScreen(
                 style = TextStyle(
                     fontSize = 18.sp,
                     fontFamily = FontFamily(Font(R.font.graphiksemibold)),
-//                    fontWeight = FontWeight(600),
                     color = Color(0xFF272727),
                 )
             )
             Row(verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.clickable {
-                    //todo navigate to list watched
+                    viewModel.event(navController, ProfileEvent.NavigateToListPage("Просмотрено"))
+                    sharedViewModel.setDataList(movies)
                 }) {
                 Text(
-                    text = "15",
+                    text = movies.size.toString(),
                     style = TextStyle(
                         fontSize = 14.sp,
                         fontFamily = FontFamily(Font(R.font.graphikmedium)),
@@ -103,7 +106,7 @@ fun ProfileScreen(
             ScreenState.Loading -> LoaderScreen()
             ScreenState.Success -> {
                 ListMovies(movies = movies) {
-                    viewModel.event(it)
+                    viewModel.event(navController, it)
                 }
             }
         }
@@ -149,17 +152,17 @@ fun ProfileScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         Row {
-            CollectionCard(R.drawable.like, "Любимые", 15)
+            CollectionCard(R.drawable.like, "Любимые", 15){}
             Spacer(modifier = Modifier.width(20.dp))
-            CollectionCard(R.drawable.save, "Хочу посмотреть", 15)
+            CollectionCard(R.drawable.save, "Хочу посмотреть", 15){}
         }
         Spacer(modifier = Modifier.height(20.dp))
-        CollectionCard(R.drawable.like, "Русское кино", 15)
+        CollectionCard(R.drawable.like, "Русское кино", 15){}
     }
 }
 
 @Composable
-fun CollectionCard(image: Int, title: String, count: Int) {
+fun CollectionCard(image: Int, title: String, count: Int, onClick: (ProfileEvent) -> Unit) {
     Box(
         Modifier
             .border(
@@ -171,7 +174,6 @@ fun CollectionCard(image: Int, title: String, count: Int) {
             .width(146.dp)
             .height(146.dp)
             .background(color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 8.dp))
-//            .padding(start = 43.5.dp, top = 30.5.dp, end = 43.5.dp, bottom = 27.5.dp)
             .clickable {
                 //todo navigate to collection
             }
@@ -217,7 +219,6 @@ fun CollectionCard(image: Int, title: String, count: Int) {
                     )
                 )
             }
-
         }
     }
 }
@@ -238,7 +239,7 @@ fun ListMovies(movies: List<Movie>, onClick: (ProfileEvent) -> Unit) {
                     movie.genres,
                     null
                 ) {
-
+                    onClick(ProfileEvent.NavigateToMovie(movie.kinopoiskId))
                 }
             }
         }
