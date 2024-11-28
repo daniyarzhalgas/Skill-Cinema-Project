@@ -10,6 +10,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import sdu.project.cinemaapp.data.local.AppDatabase
 import sdu.project.cinemaapp.domain.model.FilmStaff
 import sdu.project.cinemaapp.domain.model.MovieImage
 import sdu.project.cinemaapp.domain.model.Movie
@@ -60,15 +61,32 @@ class MovieDetailsViewModel @Inject constructor(
                     launchSingleTop = true
                 }
             }
+
             is MovieDetailsEvent.OnBackClick -> {
                 navController.popBackStack()
             }
+
             is MovieDetailsEvent.LoadGallery -> {
                 navController.navigate("gallery_screen")
             }
+
             is MovieDetailsEvent.NavigateToList -> {
                 navController.navigate("list_screen/${event.title}")
             }
+
+            is MovieDetailsEvent.UpdateWatchedStatus -> {
+                updateWatchedStatus(event.updatedMovie)
+            }
+        }
+    }
+
+    private fun updateWatchedStatus(movie: Movie) {
+
+        viewModelScope.launch {
+            if (movie.isWatched)
+                moviesRepository.setMovie(movie)
+            else
+                moviesRepository.deleteWatched(movie)
         }
     }
 

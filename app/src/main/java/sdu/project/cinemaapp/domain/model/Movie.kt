@@ -1,12 +1,23 @@
 package sdu.project.cinemaapp.domain.model
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(
+    indices = [
+        Index(value = ["id"]),
+        Index(value = ["kinopoiskId"]),
+        Index(value = ["isWatched"]),
+        Index(value = ["isFavorite"]),
+        Index(value = ["isMarked"]),
+        Index(value = ["collectionName"])
+    ]
+)
 data class Movie(
-    @PrimaryKey
-    var kinopoiskId: Int,
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0,
+    val kinopoiskId: Int,
     val kinopoiskHDId: String?,
     val imdbId: String?,
     val nameRu: String?,
@@ -51,7 +62,11 @@ data class Movie(
     val serial: Boolean?,
     val shortFilm: Boolean?,
     val completed: Boolean?,
-    val professionKey: String?
+    val professionKey: String?,
+    var isWatched: Boolean = false,
+    var isFavorite: Boolean = false,
+    var isMarked: Boolean = false,
+    var collectionName: String?
 )
 
 

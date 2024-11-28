@@ -1,9 +1,7 @@
 package sdu.project.cinemaapp.presentation.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,7 +35,7 @@ fun ItemCard(
     genres: List<Genre>?,
     profession: String?,
     onClick: (Int) -> Unit
-){
+) {
     Column(
         modifier = Modifier
             .padding(end = 8.dp)
@@ -49,7 +47,7 @@ fun ItemCard(
             .height(235.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box{
+        Box {
             AsyncImage(
                 model = posterUrl,
                 contentDescription = null,
@@ -58,19 +56,19 @@ fun ItemCard(
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(5.dp))
             )
-            Box(
-                modifier = Modifier
-                    .padding(horizontal = 4.dp, vertical = 2.dp)
-                    .align(Alignment.TopEnd)
-                    .padding(horizontal = 4.dp, vertical = 2.dp)
-                    .align(Alignment.TopEnd)
-                    .background(color = Color(0xFF3D3BFF), shape = RoundedCornerShape(4.dp))
-                    .width(22.dp)
-                    .height(14.dp),
-                contentAlignment = Alignment.Center
-            )
-            {
-                ratingKinopoisk?.let {
+            if(ratingKinopoisk != null) {
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                        .align(Alignment.TopEnd)
+                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                        .align(Alignment.TopEnd)
+                        .background(color = Color(0xFF3D3BFF), shape = RoundedCornerShape(4.dp))
+                        .width(22.dp)
+                        .height(14.dp),
+                    contentAlignment = Alignment.Center
+                )
+                {
                     Text(
                         text = ratingKinopoisk.toString(),
                         style = TextStyle(
@@ -80,12 +78,13 @@ fun ItemCard(
                     )
                 }
             }
-
         }
         Column {
             Text(
                 text = nameRu,
-                modifier = Modifier.padding(top = 8.dp).width(120.dp),
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .width(120.dp),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 style = TextStyle(

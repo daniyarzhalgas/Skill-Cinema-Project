@@ -5,12 +5,10 @@ import sdu.project.cinemaapp.data.local.AppDatabase
 
 import sdu.project.cinemaapp.data.remote.MoviesApi
 import sdu.project.cinemaapp.domain.model.Actor
-import sdu.project.cinemaapp.domain.model.Collection
 import sdu.project.cinemaapp.domain.model.FilmStaff
 import sdu.project.cinemaapp.domain.model.MovieImage
 import sdu.project.cinemaapp.domain.model.Movie
 import sdu.project.cinemaapp.domain.model.SimilarMovie
-import sdu.project.cinemaapp.domain.model.WatchedMovie
 import sdu.project.cinemaapp.domain.repository.MoviesRepository
 import javax.inject.Inject
 
@@ -32,7 +30,9 @@ class MoviesRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMovieById(id: Int): Movie {
-        return api.getMovieById(id)
+        val movie = db.movieDao().getMovie(id)
+
+        return movie ?: api.getMovieById(id)
     }
 
     override suspend fun getActors(id: Int): List<FilmStaff> {
@@ -69,9 +69,7 @@ class MoviesRepositoryImpl @Inject constructor(
         return api.getSimilarMovies(id).items
     }
 
-    override suspend fun getMoviesFromCollection(type: String): List<Collection> {
-        return db.collectionDao().getAllCollectionMovies(type)
-    }
+
 
     override suspend fun setMovie(movie: Movie) {
         db.movieDao().setMovie(movie)
@@ -81,8 +79,16 @@ class MoviesRepositoryImpl @Inject constructor(
         return db.movieDao().getMovies(movieIds)
     }
 
-    override suspend fun setWatchedMovie(movie: WatchedMovie) {
-        db.watchedMovieDao().setWatchedMovie(movie)
+    override suspend fun getWatchedMovies(): List<Movie> {
+        return db.movieDao().getMoviesByWatched()
+    }
+
+    override suspend fun deleteAllWatchedMovies() {
+        db.movieDao().deleteAllWatchedMovies()
+    }
+
+    override suspend fun deleteWatched(movie: Movie) {
+        db.movieDao().deleteMovie(movie)
     }
 
 

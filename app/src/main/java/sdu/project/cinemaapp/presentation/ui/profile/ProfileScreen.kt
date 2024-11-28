@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,7 +28,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,18 +40,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.HiltViewModelFactory
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewModelScope
 import sdu.project.cinemaapp.R
 import sdu.project.cinemaapp.domain.model.Movie
 import sdu.project.cinemaapp.presentation.state.ScreenState
 import sdu.project.cinemaapp.presentation.ui.components.ItemCard
 import sdu.project.cinemaapp.presentation.ui.screens.ErrorScreen
 import sdu.project.cinemaapp.presentation.ui.screens.LoaderScreen
-import kotlin.math.log
 
 
 @Composable
@@ -101,12 +97,14 @@ fun ProfileScreen(
 
         // todo fetching movies
 
-        when(state){
+        when (state) {
             ScreenState.Initial -> {}
             ScreenState.Error -> ErrorScreen()
             ScreenState.Loading -> LoaderScreen()
             ScreenState.Success -> {
-                ListMovies(movies = movies )
+                ListMovies(movies = movies) {
+                    viewModel.event(it)
+                }
             }
         }
 //
@@ -225,68 +223,57 @@ fun CollectionCard(image: Int, title: String, count: Int) {
 }
 
 @Composable
-fun ListMovies(movies: List<Movie>) {
-    Log.i("ListMovies", "${movies[0]}")
+fun ListMovies(movies: List<Movie>, onClick: (ProfileEvent) -> Unit) {
     LazyRow {
         item {
             Spacer(Modifier.width(30.dp))
         }
         items(movies.take(10)) { movie ->
             movie.posterUrlPreview?.let {
-                    ItemCard(
-                        movie.kinopoiskId,
-                        it,
-                        movie.ratingKinopoisk,
-                        movie.nameRu ?:"Null",
-                        movie.genres,
-                        null
-                    ) {
+                ItemCard(
+                    movie.kinopoiskId,
+                    it,
+                    movie.ratingKinopoisk,
+                    movie.nameRu ?: "Null",
+                    movie.genres,
+                    null
+                ) {
 
-                    }
+                }
             }
         }
         item {
-            Column(
-                modifier = Modifier
-                    .height(150.dp)
-                    .padding(end = 30.dp)
-                    .clickable {
-                        //todo delete history
-                    },
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+            Box(
+                modifier = Modifier.padding(top = 60.dp)
             ) {
-
                 Button(
-                    onClick = { },
+                    onClick = { onClick(ProfileEvent.DeleteAllWatchedMovies) },
                     modifier = Modifier
-                        .size(50.dp),
+                        .wrapContentSize(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
                     )
                 ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .fillParentMaxSize()
-                            .border(1.dp, color = Color.White)
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceEvenly
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
                             contentDescription = "Delete",
                             tint = Color(0xFF3D3BFF)
                         )
+                        Text(
+                            text = "Очистить\nисторию",
+                            style = TextStyle(
+                                fontSize = 12.sp,
+                                fontFamily = FontFamily(Font(R.font.graphikregular)),
+                                color = Color(0xFF272727),
+                                textAlign = TextAlign.Center,
+                            )
+                        )
                     }
                 }
-                Text(
-                    text = "Очистить\nисторию",
-                    style = TextStyle(
-                        fontSize = 12.sp,
-                        fontFamily = FontFamily(Font(R.font.graphikregular)),
-                        color = Color(0xFF272727),
-                        textAlign = TextAlign.Center,
-                    )
-                )
             }
         }
     }

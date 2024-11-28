@@ -28,6 +28,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -254,6 +255,8 @@ fun FilmItem(movie: Movie, onClick: (Int) -> Unit) {
             movie.nameRu?.let {
                 Text(
                     text = it,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                     style = TextStyle(
                         fontSize = 14.sp,
                         fontFamily = FontFamily(Font(R.font.graphikregular)),
@@ -270,7 +273,5 @@ fun FilmItem(movie: Movie, onClick: (Int) -> Unit) {
                 )
             )
         }
-
     }
-
 }
