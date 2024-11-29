@@ -29,8 +29,9 @@ interface MovieDao {
     suspend fun deleteAllWatchedMovies()
 
 
-    @Query("Select * from Movie where collectionName = 'liked'")
-    suspend fun getMoviesByLiked() : List<Movie>
+    @Query("SELECT * FROM Movie WHERE collectionName LIKE '%' || :collection || '%'")
+    suspend fun getMoviesByCollection(collection: String): List<Movie>
+
 
 
 

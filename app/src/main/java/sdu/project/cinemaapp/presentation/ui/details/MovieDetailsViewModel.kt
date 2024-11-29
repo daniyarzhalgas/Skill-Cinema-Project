@@ -74,9 +74,28 @@ class MovieDetailsViewModel @Inject constructor(
                 navController.navigate("list_screen/${event.title}")
             }
 
+            is MovieDetailsEvent.UpdateCollection -> {
+                updateCollection(event.movieId, event.collectionName)
+            }
         }
     }
 
+    private fun updateCollection(movieId: Int, collectionName: String) {
+        viewModelScope.launch {
+            val existMovie = moviesRepository.getMovieById(movieId)
+
+            val updateCollection = existMovie.collectionName?.toMutableList() ?: mutableListOf()
+
+            if (updateCollection.contains(collectionName)){
+                updateCollection.remove(collectionName)
+            }else{
+                updateCollection.add(collectionName)
+            }
+
+            existMovie.collectionName = updateCollection
+            moviesRepository.setMovie(existMovie)
+        }
+    }
 
     private fun fetchAllMovieDetails(id: Int) {
         viewModelScope.launch {

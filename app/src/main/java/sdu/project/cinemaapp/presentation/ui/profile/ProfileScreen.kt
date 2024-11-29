@@ -152,12 +152,12 @@ fun ProfileScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         Row {
-            CollectionCard(R.drawable.like, "Любимые", 15){}
+            CollectionCard(R.drawable.like, "Любимые", 15){viewModel.event(navController, it)}
             Spacer(modifier = Modifier.width(20.dp))
-            CollectionCard(R.drawable.save, "Хочу посмотреть", 15){}
+            CollectionCard(R.drawable.save, "Хочу посмотреть", 15){viewModel.event(navController, it)}
         }
         Spacer(modifier = Modifier.height(20.dp))
-        CollectionCard(R.drawable.like, "Русское кино", 15){}
+        CollectionCard(R.drawable.like, "Русское кино", 15){viewModel.event(navController, it)}
     }
 }
 
@@ -175,7 +175,7 @@ fun CollectionCard(image: Int, title: String, count: Int, onClick: (ProfileEvent
             .height(146.dp)
             .background(color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 8.dp))
             .clickable {
-                //todo navigate to collection
+                onClick(ProfileEvent.NavigateToCollection(title))
             }
     )
     {

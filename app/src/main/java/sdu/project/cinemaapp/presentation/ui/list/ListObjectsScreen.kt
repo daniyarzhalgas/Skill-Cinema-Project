@@ -101,6 +101,10 @@ fun ListObjectsLayout(
             )
         }
 
+        if (listObj.isEmpty()){
+            ErrorScreen("Ничего не найдено")
+        }
+
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             verticalArrangement = Arrangement.spacedBy(16.dp)

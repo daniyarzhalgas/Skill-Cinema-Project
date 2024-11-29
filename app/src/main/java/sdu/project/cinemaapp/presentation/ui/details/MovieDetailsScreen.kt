@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -93,9 +94,10 @@ fun MovieDetailsScreen(
                 getStaff,
                 getImages,
                 getSimilarFilms,
-                navController,
-                viewModel
-            )
+                navController
+            ) {
+                viewModel.event(navController, it)
+            }
         }
 
         is ScreenState.Error -> ErrorScreen()
@@ -112,7 +114,7 @@ fun MovieContent(
     images: List<MovieImage>,
     similarFilms: List<SimilarMovie>,
     navController: NavHostController,
-    viewModel: MovieDetailsViewModel
+    onClick: (MovieDetailsEvent) -> Unit
 ) {
     val sharedViewModel: SharedViewModel = hiltViewModel()
     val scrollState = rememberScrollState()
@@ -120,6 +122,14 @@ fun MovieContent(
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
+    var likeState by remember(movie) {
+        mutableStateOf(movie?.collectionName?.contains("Любимые") == true)
+    }
+
+
+    var noteState by remember (movie) {
+        mutableStateOf(movie?.collectionName?.contains("Хочу посмотреть") == true)
+    }
 
     Column(
         modifier = Modifier
@@ -160,7 +170,7 @@ fun MovieContent(
                         .offset(x = 10.dp, y = 10.dp)
                         .align(Alignment.TopStart)
                         .clickable {
-                            viewModel.event(navController, MovieDetailsEvent.OnBackClick)
+                            onClick(MovieDetailsEvent.OnBackClick)
                         }
                 )
 
@@ -207,30 +217,35 @@ fun MovieContent(
                             textAlign = TextAlign.Center,
                         )
                     )
-                    Row {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Image(
-                            painter = painterResource(R.drawable.like),
+                            painter = painterResource(if (likeState) R.drawable.like_orange else R.drawable.like),
                             contentDescription = "", modifier = Modifier
-                                .size(34.dp)
-                                .padding(8.dp)
-                                .clickable { TODO() }
+                                .wrapContentSize()
+                                .clickable {
+                                    likeState = !likeState
+                                    onClick(MovieDetailsEvent.UpdateCollection(movie.kinopoiskId, "Любимые"))
+                                }
                         )
 
                         Image(
-                            painter = painterResource(R.drawable.save),
+                            painter = painterResource(if (noteState) R.drawable.save_orange else R.drawable.save),
                             contentDescription = "",
                             modifier = Modifier
-                                .size(34.dp)
-                                .padding(8.dp)
-                                .clickable { TODO() }
+                                .wrapContentSize()
+                                .padding(start = 16.dp)
+                                .clickable {
+                                    noteState = !noteState
+                                    onClick(MovieDetailsEvent.UpdateCollection(movie.kinopoiskId, "Хочу посмотреть"))
+                                }
                         )
 
                         Image(
                             painter = painterResource(R.drawable.underlined_eye),
                             contentDescription = "",
                             modifier = Modifier
-                                .size(34.dp)
-                                .padding(8.dp)
+                                .wrapContentSize()
+                                .padding(start = 16.dp)
                                 .clickable { TODO() }
                         )
 
@@ -238,8 +253,8 @@ fun MovieContent(
                             painter = painterResource(R.drawable.share),
                             contentDescription = "",
                             modifier = Modifier
-                                .size(34.dp)
-                                .padding(8.dp)
+                                .wrapContentSize()
+                                .padding(start = 16.dp)
                                 .clickable { TODO() }
                         )
 
@@ -248,7 +263,7 @@ fun MovieContent(
                             contentDescription = "",
                             modifier = Modifier
                                 .size(34.dp)
-                                .padding(8.dp)
+                                .padding(start = 16.dp)
                                 .clickable {
                                     showBottomSheet = true
                                 }
@@ -287,14 +302,12 @@ fun MovieContent(
                 if (filteredActor.isNotEmpty()) {
                     Header("В фильме снимались", filteredActor.size) {
                         sharedViewModel.setDataList(filteredActor)
-                        viewModel.event(
-                            navController,
-                            MovieDetailsEvent.NavigateToList("В фильме снимались")
-                        )
+                        onClick(MovieDetailsEvent.NavigateToList("В фильме снимались"))
+
                     }
                     Spacer(modifier = Modifier.height(14.dp))
                     StaffListView(staffs = filteredActor, 4) {
-                        viewModel.event(navController, it)
+                        onClick(it)
                     }
                 }
 
@@ -303,14 +316,11 @@ fun MovieContent(
                 if (filteredStaffs.isNotEmpty()) {
                     Header("Над фильмом работали", filteredStaffs.size) {
                         sharedViewModel.setDataList(filteredStaffs)
-                        viewModel.event(
-                            navController,
-                            MovieDetailsEvent.NavigateToList("Над фильмом работали")
-                        )
+                        onClick(MovieDetailsEvent.NavigateToList("Над фильмом работали"))
                     }
                     Spacer(modifier = Modifier.height(14.dp))
                     StaffListView(staffs = filteredStaffs, countItem = 2) {
-                        viewModel.event(navController, it)
+                        onClick(it)
                     }
                 }
 
@@ -328,14 +338,11 @@ fun MovieContent(
                 if (similarFilms.isNotEmpty()) {
                     Header("Похожие фильмы", similarFilms.size) {
                         sharedViewModel.setDataList(similarFilms)
-                        viewModel.event(
-                            navController,
-                            MovieDetailsEvent.NavigateToList("Похожие фильмы")
-                        )
+                        onClick(MovieDetailsEvent.NavigateToList("Похожие фильмы"))
                     }
                     Spacer(modifier = Modifier.height(14.dp))
                     SimilarMoviesList(similarFilms) {
-                        viewModel.event(navController, it)
+                        onClick(it)
                     }
                 }
                 Spacer(modifier = Modifier.height(30.dp))
@@ -404,7 +411,7 @@ fun SimilarMoviesList(
         ) {
             items(similarMovies) { item ->
                 MoviesItem(item) {
-                    onClick(MovieDetailsEvent.LoadMovie(item.filmId))
+                    onClick(it)
                 }
             }
 
@@ -413,16 +420,17 @@ fun SimilarMoviesList(
 }
 
 @Composable
-fun MoviesItem(movie: SimilarMovie, onClick: () -> Unit) {
+fun MoviesItem(movie: SimilarMovie, onClick: (MovieDetailsEvent) -> Unit) {
     Column(modifier = Modifier
         .width(111.dp)
+        .height(220.dp)
         .clickable {
-            onClick()
+            onClick(MovieDetailsEvent.LoadMovie(movie.filmId))
         }) {
         AsyncImage(
             model = movie.posterUrl,
             contentDescription = null,
-            modifier = Modifier,
+            modifier = Modifier.height(170.dp),
             contentScale = ContentScale.Crop
         )
         Text(

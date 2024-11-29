@@ -25,6 +25,6 @@ interface MoviesRepository {
     suspend fun deleteAllWatchedMovies()
     suspend fun deleteWatched(movie: Movie)
 
-    suspend fun getMoviesByLiked(): List<Movie>
-    suspend fun deleteFromLiked()
+    suspend fun getMoviesByCollection(collection: String): List<Movie>
+
 }

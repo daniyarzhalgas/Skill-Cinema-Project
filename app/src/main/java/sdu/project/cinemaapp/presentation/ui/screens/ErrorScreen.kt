@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import sdu.project.cinemaapp.R
 
 @Composable
-fun ErrorScreen() {
+fun ErrorScreen(text: String = "Loading error") {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -25,7 +25,7 @@ fun ErrorScreen() {
         Image(
             painter = painterResource(id = R.drawable.onboarding_img1), contentDescription = ""
         )
-        Text(text = "Loading error",
+        Text(text = text,
             modifier = Modifier.padding(16.dp),
             style = TextStyle(
                 color = Color.Red

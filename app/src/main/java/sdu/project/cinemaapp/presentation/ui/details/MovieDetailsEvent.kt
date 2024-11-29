@@ -10,4 +10,6 @@ interface MovieDetailsEvent : Event {
     data object OnBackClick : MovieDetailsEvent
     data object LoadGallery : MovieDetailsEvent
     data class NavigateToList(val title: String) : MovieDetailsEvent
+
+    data class UpdateCollection(val movieId: Int, val collectionName: String): MovieDetailsEvent
 }

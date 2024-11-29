@@ -11,11 +11,13 @@ import kotlinx.coroutines.launch
 import sdu.project.cinemaapp.domain.model.Movie
 import sdu.project.cinemaapp.domain.repository.MoviesRepository
 import sdu.project.cinemaapp.presentation.state.ScreenState
+import sdu.project.cinemaapp.presentation.viewModel.SharedViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val rep: MoviesRepository
+    private val rep: MoviesRepository,
+    private val sharedViewModel: SharedViewModel
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ScreenState>(ScreenState.Initial)
@@ -59,15 +61,28 @@ class ProfileViewModel @Inject constructor(
             is ProfileEvent.NavigateToListPage -> {
                 navController.navigate("list_screen/${event.title}")
             }
+
+            is ProfileEvent.NavigateToCollection -> {
+                viewModelScope.launch {
+                    navigateToCollection(event.title)
+                    navController.navigate("list_screen/${event.title}")
+                }
+            }
         }
     }
 
-    private fun deleteAllWatchedMovies() {
-        viewModelScope.launch {
-            rep.deleteAllWatchedMovies()
-            fetchProfileData()
-        }
+    private suspend fun navigateToCollection(title: String) {
+        val movies = rep.getMoviesByCollection(title)
+        sharedViewModel.setDataList(movies)
     }
+
+
+private fun deleteAllWatchedMovies() {
+    viewModelScope.launch {
+        rep.deleteAllWatchedMovies()
+        fetchProfileData()
+    }
+}
 
 
 }
