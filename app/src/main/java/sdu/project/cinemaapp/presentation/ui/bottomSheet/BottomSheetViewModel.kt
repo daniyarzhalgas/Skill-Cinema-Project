@@ -38,7 +38,7 @@ class BottomSheetViewModel @Inject constructor(
             if (movie.isWatched)
                 rep.setMovie(movie)
             else
-                rep.deleteWatched(movie)
+                rep.deleteWatched(movie.kinopoiskId)
             _movie.update {  movie }
         }
     }

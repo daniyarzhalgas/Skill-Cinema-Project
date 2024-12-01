@@ -1,5 +1,6 @@
 package sdu.project.cinemaapp.domain.repository
 
+import kotlinx.coroutines.flow.Flow
 import sdu.project.cinemaapp.domain.model.Actor
 import sdu.project.cinemaapp.domain.model.FilmStaff
 import sdu.project.cinemaapp.domain.model.MovieImage
@@ -23,8 +24,9 @@ interface MoviesRepository {
 
     suspend fun getWatchedMovies(): List<Movie>
     suspend fun deleteAllWatchedMovies()
-    suspend fun deleteWatched(movie: Movie)
+    suspend fun deleteWatched(id: Int)
 
     suspend fun getMoviesByCollection(collection: String): List<Movie>
+    fun getCollectionCount(collection : String) : Flow<Int>
 
 }

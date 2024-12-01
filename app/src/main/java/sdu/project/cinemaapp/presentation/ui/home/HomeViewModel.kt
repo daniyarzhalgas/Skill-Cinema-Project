@@ -66,21 +66,23 @@ class HomeViewModel @Inject constructor(
     private fun fetchAllHomeData() {
         viewModelScope.launch {
             _state.value = ScreenState.Loading
-            try {
 
-                val premieresDeferred = async { moviesRepository.getPremieres(currentMonth, currentYear, null) }
-                val comicsCollectionsDeferred = async { moviesRepository.getPopular("COMICS_THEME", null) }
-                val popularMoviesDeferred = async { moviesRepository.getPopular("TOP_POPULAR_MOVIES", null) }
 
-                _premieres.value = premieresDeferred.await()
-                _comicsCollections.value = comicsCollectionsDeferred.await()
-                _popularMovies.value = popularMoviesDeferred.await()
+            val premieresDeferred =
+                async { moviesRepository.getPremieres(currentMonth, currentYear, null) }
+            val comicsCollectionsDeferred =
+                async { moviesRepository.getPopular("COMICS_THEME", null) }
+            val popularMoviesDeferred =
+                async { moviesRepository.getPopular("TOP_POPULAR_MOVIES", null) }
 
-                _state.value = ScreenState.Success
 
-            } catch (e: Exception) {
-                _state.value = ScreenState.Error
-            }
+            _premieres.value = premieresDeferred.await()
+            _comicsCollections.value = comicsCollectionsDeferred.await()
+            _popularMovies.value = popularMoviesDeferred.await()
+
+            _state.value = ScreenState.Success
+
+
         }
     }
 }

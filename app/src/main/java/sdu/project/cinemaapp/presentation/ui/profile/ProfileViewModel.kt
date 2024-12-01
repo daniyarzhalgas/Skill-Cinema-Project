@@ -1,12 +1,18 @@
 package sdu.project.cinemaapp.presentation.ui.profile
 
 import android.util.Log
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import sdu.project.cinemaapp.domain.model.Movie
 import sdu.project.cinemaapp.domain.repository.MoviesRepository
@@ -25,6 +31,10 @@ class ProfileViewModel @Inject constructor(
 
     private val _watched = MutableStateFlow<List<Movie>>(emptyList())
     val watched = _watched.asStateFlow()
+
+    private val _collectionCount = MutableStateFlow<Map<String, Int>>(emptyMap())
+    val collectionCount = _collectionCount.asStateFlow()
+
 
     init {
         fetchProfileData()
@@ -68,11 +78,23 @@ class ProfileViewModel @Inject constructor(
                     navController.navigate("list_screen/${event.title}")
                 }
             }
+
+        }
+    }
+
+    fun getCollectionCount(title: String){
+        viewModelScope.launch {
+            rep.getCollectionCount(title).collect { count ->
+                _collectionCount.update { currentCount ->
+                    currentCount + (title to count)
+                }
+            }
         }
     }
 
     private suspend fun navigateToCollection(title: String) {
         val movies = rep.getMoviesByCollection(title)
+
         sharedViewModel.setDataList(movies)
     }
 

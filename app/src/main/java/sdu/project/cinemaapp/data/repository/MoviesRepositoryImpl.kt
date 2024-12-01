@@ -1,6 +1,9 @@
 package sdu.project.cinemaapp.data.repository
 
 import android.util.Log
+import coil.network.HttpException
+import kotlinx.coroutines.flow.Flow
+import okio.IOException
 import sdu.project.cinemaapp.data.local.AppDatabase
 
 import sdu.project.cinemaapp.data.remote.MoviesApi
@@ -23,6 +26,8 @@ class MoviesRepositoryImpl @Inject constructor(
         page: Int?
     ): List<Movie> {
         return api.getPremieres(month, year, page).items
+
+
     }
 
     override suspend fun getPopular(type: String, page: Int?): List<Movie> {
@@ -70,7 +75,6 @@ class MoviesRepositoryImpl @Inject constructor(
     }
 
 
-
     override suspend fun setMovie(movie: Movie) {
         db.movieDao().setMovie(movie)
     }
@@ -87,15 +91,17 @@ class MoviesRepositoryImpl @Inject constructor(
         db.movieDao().deleteAllWatchedMovies()
     }
 
-    override suspend fun deleteWatched(movie: Movie) {
-        db.movieDao().deleteMovie(movie)
+    override suspend fun deleteWatched(id: Int) {
+        db.movieDao().deleteFromWatched(id)
     }
 
     override suspend fun getMoviesByCollection(collection: String): List<Movie> {
         return db.movieDao().getMoviesByCollection(collection)
     }
 
-
+    override fun getCollectionCount(collection: String): Flow<Int> {
+        return db.movieDao().getCollectionCount(collection)
+    }
 
 
 }

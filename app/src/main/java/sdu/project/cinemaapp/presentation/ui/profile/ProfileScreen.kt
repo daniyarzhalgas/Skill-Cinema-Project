@@ -27,6 +27,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -152,17 +153,36 @@ fun ProfileScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         Row {
-            CollectionCard(R.drawable.like, "Любимые", 15){viewModel.event(navController, it)}
+            CollectionCard(
+                image = R.drawable.like,
+                title = "Любимые",
+                viewModel
+            ) { viewModel.event(navController, it) }
             Spacer(modifier = Modifier.width(20.dp))
-            CollectionCard(R.drawable.save, "Хочу посмотреть", 15){viewModel.event(navController, it)}
+            CollectionCard(
+                image = R.drawable.save,
+                title = "Хочу посмотреть",
+                viewModel
+            ) { viewModel.event(navController, it) }
         }
-        Spacer(modifier = Modifier.height(20.dp))
-        CollectionCard(R.drawable.like, "Русское кино", 15){viewModel.event(navController, it)}
     }
 }
 
+
 @Composable
-fun CollectionCard(image: Int, title: String, count: Int, onClick: (ProfileEvent) -> Unit) {
+fun CollectionCard(
+    image: Int,
+    title: String,
+    viewModel: ProfileViewModel,
+    onClick: (ProfileEvent) -> Unit
+) {
+
+    LaunchedEffect(title) {
+        viewModel.getCollectionCount(title)
+    }
+
+    val count by viewModel.collectionCount.collectAsStateWithLifecycle()
+    val collectionCount = count[title] ?: 0
     Box(
         Modifier
             .border(
@@ -210,7 +230,7 @@ fun CollectionCard(image: Int, title: String, count: Int, onClick: (ProfileEvent
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = count.toString(),
+                    text = collectionCount.toString(),
                     style = TextStyle(
                         fontSize = 8.sp,
                         fontFamily = FontFamily(Font(R.font.graphikmedium)),
