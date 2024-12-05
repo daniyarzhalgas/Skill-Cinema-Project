@@ -73,4 +73,13 @@ interface MoviesApi {
     @GET("/api/v2.2/films/filters")
     suspend fun getFilters(): CountryGenreDto
 
+
+    @Headers("X-API-KEY: $API_KEY")
+    @GET("/api/v2.2/films")
+    suspend fun getFilms(
+        @Query("countries") countries: List<Int>,
+        @Query("genres") genres: List<Int>
+
+    ): CountryGenreDto
+
 }

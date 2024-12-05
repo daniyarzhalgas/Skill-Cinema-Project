@@ -5,4 +5,5 @@ sealed interface SearchEvent {
     data object OnFilterClick : SearchEvent
     data class OnSearchTextChange(val text: String) : SearchEvent
     data class OnMovieClick(val movieId: Int) : SearchEvent
+
 }

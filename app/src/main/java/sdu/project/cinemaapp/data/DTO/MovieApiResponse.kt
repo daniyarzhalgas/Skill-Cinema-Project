@@ -14,7 +14,10 @@ data class MovieApiResponse(
     val filmLength: String?,
     val description: String?,
     val countries: List<Country>?,
-    val genres: List<Genre>?
+    val genres: List<Genre>?,
+    val type: String,
+    val ratingVoteCount: Int,
+    val rating: String
 )
 
 fun mapApiResponseToMovie(apiResponse: MovieApiResponse): Movie {
@@ -31,13 +34,14 @@ fun mapApiResponseToMovie(apiResponse: MovieApiResponse): Movie {
         description = apiResponse.description,
         countries = apiResponse.countries?.map { Country(it.country) },
         genres = apiResponse.genres?.map { Genre(it.genre) },
+        type = apiResponse.type,
+        reviewsCount = apiResponse.ratingVoteCount,
+        ratingKinopoisk = apiResponse.rating.toDouble(),
         imdbId = null,
         coverUrl = null,
         logoUrl = null,
-        reviewsCount = null,
         ratingGoodReview = null,
         ratingGoodReviewVoteCount = null,
-        ratingKinopoisk = null,
         ratingKinopoiskVoteCount = null,
         ratingImdb = null,
         ratingImdbVoteCount = null,
@@ -53,7 +57,6 @@ fun mapApiResponseToMovie(apiResponse: MovieApiResponse): Movie {
         editorAnnotation = null,
         isTicketsAvailable = null,
         productionStatus = null,
-        type = null,
         ratingMpaa = null,
         ratingAgeLimits = null,
         hasImax = null,

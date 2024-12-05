@@ -18,6 +18,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.RangeSlider
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 import androidx.navigation.NavHostController
 import sdu.project.cinemaapp.R
@@ -46,16 +48,23 @@ fun FilterScreen(
     navController: NavHostController,
     viewModel: FilterViewModel = hiltViewModel(),
 ) {
-    val selectedCountry by viewModel.country.collectAsState()
-    val selectedGenre by viewModel.genre.collectAsState()
-
-    FilterPage(selectedCountry, selectedGenre) { viewModel.event(navController, it) }
+    FilterPage(viewModel) { viewModel.event(navController, it) }
 }
 
 @Composable
-fun FilterPage(selectedCountry : String, selectedGenre: String, onClick: (FilterEvent) -> Unit) {
-    val tabs = listOf("Все", "Фильмы", "Сериалы")
-    val tabs2 = listOf("Дата", "Популярность", "Рейтинг")
+fun FilterPage(viewModel: FilterViewModel, onClick: (FilterEvent) -> Unit) {
+    val selectedCountry by viewModel.country.collectAsState()
+    val selectedGenre by viewModel.genre.collectAsState()
+    val selectedYearFrom by viewModel.yearFrom.collectAsState()
+    val selectedYearTo by viewModel.yearTo.collectAsState()
+    val sliderValues by viewModel.sliderValues.collectAsState()
+
+
+    val tabs = viewModel.tabs
+    val tabs2 = viewModel.tabs2
+
+    val selectedTab by viewModel.selectedTab.collectAsStateWithLifecycle()
+    val selectedTabSecond by viewModel.selectedTabSecond.collectAsState()
 
     LazyColumn {
         item {
@@ -88,25 +97,29 @@ fun FilterPage(selectedCountry : String, selectedGenre: String, onClick: (Filter
         item {
             ShowContent(
                 tabs = tabs,
+                selectedTab = selectedTab,
+                isFirst = true,
                 title = "Показывать"
-            )
+            ){ onClick(it) }
         }
         item {
             Sorting("Страна", selectedCountry) { onClick(FilterEvent.OnCountryClicked) }
             CustomDivider()
             Sorting("Жанр", selectedGenre) {onClick(FilterEvent.OnGenreClicked)}
             CustomDivider()
-            Sorting("Год", "с 1997 до 2017") {onClick(FilterEvent.OnYearClicked)}
+            Sorting("Год", "c $selectedYearFrom до $selectedYearTo") {onClick(FilterEvent.OnYearClicked)}
             CustomDivider()
             Sorting("Рейтинг", "любой") {}
         }
         item {
-            RangeSliderExample()
+            RangeSliderExample(sliderValues){onClick(it)}
             CustomDivider()
             ShowContent(
                 tabs = tabs2,
+                selectedTab = selectedTabSecond,
+                isFirst = false,
                 title = "Сортировать"
-            )
+            ){onClick(it)}
             Box(modifier = Modifier.fillMaxWidth()) {
                 Button(
                     onClick = { TODO() },
@@ -154,8 +167,7 @@ fun CustomDivider() {
 }
 
 @Composable
-fun RangeSliderExample() {
-    var sliderValues by remember { mutableStateOf(1f..10f) }
+fun RangeSliderExample(sliderValues: ClosedFloatingPointRange<Float>, onClick: (FilterEvent) -> Unit) {
 
     Column(
         modifier = Modifier
@@ -165,9 +177,10 @@ fun RangeSliderExample() {
     ) {
         RangeSlider(
             value = sliderValues,
-            onValueChange = { newValues -> sliderValues = newValues },
-            valueRange = 1f..10f, // Диапазон от 1 до 10
-            steps = 0, // Ограниечение на количество делений между ползунками
+            onValueChange = { newValues ->
+                onClick(FilterEvent.OnSliderValueChange(newValues))},
+            valueRange = 1f..10f,
+            steps = 0,
             onValueChangeFinished = { /* По завершению изменения */ },
             colors = SliderDefaults.colors(
                 thumbColor = Color.White,

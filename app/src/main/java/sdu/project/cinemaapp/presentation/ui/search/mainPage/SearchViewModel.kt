@@ -1,9 +1,12 @@
 package sdu.project.cinemaapp.presentation.ui.search.mainPage
 
 import android.util.Log
+import android.util.Printer
 import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
@@ -22,8 +25,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val moviesRepository: MoviesRepository
+    private val moviesRepository: MoviesRepository,
 ) : ViewModel() {
+
 
     private val _state = MutableStateFlow<ScreenState>(ScreenState.Initial)
     val state = _state.asStateFlow()
@@ -33,6 +37,7 @@ class SearchViewModel @Inject constructor(
 
     private val _searchText = MutableStateFlow<String>("")
     val searchText = _searchText.asStateFlow()
+
 
     fun event(navController: NavHostController, event: SearchEvent) {
         when (event) {
@@ -86,4 +91,5 @@ class SearchViewModel @Inject constructor(
             _state.value = ScreenState.Error
         }
     }
+
 }

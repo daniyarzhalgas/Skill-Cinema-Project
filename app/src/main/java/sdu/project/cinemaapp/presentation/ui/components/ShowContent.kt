@@ -22,15 +22,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import sdu.project.cinemaapp.presentation.ui.search.filter.FilterEvent
 
 @Composable
 fun ShowContent(
     modifier: Modifier = Modifier,
-    tabs: List<String>, // Список вкладок
-    title: String
+    tabs: List<String>,
+    isFirst: Boolean,
+    selectedTab: String,
+    title: String,
+    onClick: (FilterEvent) -> Unit
 ) {
-    // Состояние для хранения текущей выбранной вкладки
-    val selectedTab = remember { mutableStateOf(tabs.first()) }
 
     Column(
         modifier = modifier
@@ -55,14 +57,14 @@ fun ShowContent(
                     modifier = Modifier
                         .weight(1f)
                         .clip(RoundedCornerShape(20.dp))
-                        .background(if (selectedTab.value == tab) Color.Blue else Color.White)
-                        .clickable { selectedTab.value = tab }
+                        .background(if (selectedTab == tab) Color.Blue else Color.White)
+                        .clickable { onClick(FilterEvent.OnTabsSelected(isFirst, tab))}
                         .padding(vertical = 8.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = tab,
-                        color = if (selectedTab.value == tab) Color.White else Color.Black,
+                        color = if (selectedTab == tab) Color.White else Color.Black,
                         fontWeight = FontWeight.Bold
                     )
                 }
