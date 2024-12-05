@@ -32,7 +32,7 @@ class SearchViewModel @Inject constructor(
     private val _state = MutableStateFlow<ScreenState>(ScreenState.Initial)
     val state = _state.asStateFlow()
 
-    private val _movies = MutableStateFlow<List<Movie>>(emptyList())
+    private val _movies = MutableStateFlow<List<Movie>?>(emptyList())
     val movies = _movies.asStateFlow()
 
     private val _searchText = MutableStateFlow<String>("")
@@ -83,7 +83,9 @@ class SearchViewModel @Inject constructor(
     private suspend fun fetchSearchingMovies(query: String) {
         try {
             _state.value = ScreenState.Loading
+            Log.i("Query", query)
             val moviesResult = moviesRepository.searchByKeyword(query)
+            Log.i("MoviesResult", moviesResult.isEmpty().toString())
             _movies.value = moviesResult
             _state.value = ScreenState.Success
         } catch (e: Exception) {

@@ -69,7 +69,7 @@ fun SearchScreen(
 @Composable
 fun SearchScreenContent(
     state: ScreenState,
-    movies: List<Movie>,
+    movies: List<Movie>?,
     searchText: String,
     onClick: (SearchEvent) -> Unit
 ) {
@@ -98,7 +98,7 @@ fun SearchScreenContent(
                 }
             }
             ScreenState.Success -> {
-                if (movies.isEmpty()) {
+                if (movies?.isEmpty() == true) {
                     Text(
                         text = "К сожалению, по вашему запросу ничего не найдено",
                         style = MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp),
@@ -114,7 +114,7 @@ fun SearchScreenContent(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        items(movies) { movie ->
+                        items(movies!!) { movie ->
                             MovieItem(movie) { onClick(SearchEvent.OnMovieClick(movie.kinopoiskId))}
                         }
                     }
