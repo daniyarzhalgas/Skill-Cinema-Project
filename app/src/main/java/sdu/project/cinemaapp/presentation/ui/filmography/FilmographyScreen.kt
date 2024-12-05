@@ -201,26 +201,30 @@ fun MovieItem(movie: Movie, onItemClick: () -> Unit) {
                     .width(100.dp)
                     .clip(RoundedCornerShape(10.dp))
             )
+            movie.ratingKinopoisk?.let {
+                Box(
+                    modifier = Modifier
+                        .padding(start = 5.dp, top = 5.dp)
+                        .width(22.dp)
+                        .height(12.dp)
+                        .background(
+                            color = Color(0xFFFFFFFF),
+                            shape = RoundedCornerShape(size = 4.dp)
+                        )
+                        .padding(horizontal = 4.dp, vertical = 2.dp)
 
-            Box(
-                modifier = Modifier
-                    .padding(start = 5.dp, top = 5.dp)
-                    .width(22.dp)
-                    .height(12.dp)
-                    .background(color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 4.dp))
-                    .padding(horizontal = 4.dp, vertical = 2.dp)
-
-            ) {
-                Text(
-                    text = movie.ratingKinopoisk.toString(),
-                    style = TextStyle(
-                        fontSize = 8.sp,
-                        fontFamily = FontFamily(Font(R.font.graphikmedium)),
-                        color = Color(0xFF272727),
-                        textAlign = TextAlign.Center,
-                    ),
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                ) {
+                    Text(
+                        text = movie.ratingKinopoisk.toString(),
+                        style = TextStyle(
+                            fontSize = 8.sp,
+                            fontFamily = FontFamily(Font(R.font.graphikmedium)),
+                            color = Color(0xFF272727),
+                            textAlign = TextAlign.Center,
+                        ),
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
             }
         }
         Column(

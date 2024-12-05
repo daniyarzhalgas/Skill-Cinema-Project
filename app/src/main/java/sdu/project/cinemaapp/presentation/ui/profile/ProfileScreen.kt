@@ -101,6 +101,8 @@ fun ProfileScreen(
 
         // todo fetching movies
 
+        Spacer(modifier = Modifier.height(20.dp))
+
         when (state) {
             ScreenState.Initial -> {}
             ScreenState.Error -> ErrorScreen()
@@ -247,7 +249,7 @@ fun CollectionCard(
 fun ListMovies(movies: List<Movie>, onClick: (ProfileEvent) -> Unit) {
     LazyRow {
         item {
-            Spacer(Modifier.width(30.dp))
+            Spacer(Modifier.width(10.dp))
         }
         items(movies.take(10)) { movie ->
             movie.posterUrlPreview?.let {

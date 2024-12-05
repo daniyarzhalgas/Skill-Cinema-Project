@@ -1,14 +1,15 @@
 package sdu.project.cinemaapp.data.repository
 
 import android.util.Log
-import coil.network.HttpException
 import kotlinx.coroutines.flow.Flow
-import okio.IOException
+import sdu.project.cinemaapp.data.DTO.mapApiResponseToMovie
 import sdu.project.cinemaapp.data.local.AppDatabase
 
 import sdu.project.cinemaapp.data.remote.MoviesApi
 import sdu.project.cinemaapp.domain.model.Actor
+import sdu.project.cinemaapp.domain.model.Country
 import sdu.project.cinemaapp.domain.model.FilmStaff
+import sdu.project.cinemaapp.domain.model.Genre
 import sdu.project.cinemaapp.domain.model.MovieImage
 import sdu.project.cinemaapp.domain.model.Movie
 import sdu.project.cinemaapp.domain.model.SimilarMovie
@@ -26,8 +27,6 @@ class MoviesRepositoryImpl @Inject constructor(
         page: Int?
     ): List<Movie> {
         return api.getPremieres(month, year, page).items
-
-
     }
 
     override suspend fun getPopular(type: String, page: Int?): List<Movie> {
@@ -101,6 +100,25 @@ class MoviesRepositoryImpl @Inject constructor(
 
     override fun getCollectionCount(collection: String): Flow<Int> {
         return db.movieDao().getCollectionCount(collection)
+    }
+
+    override suspend fun searchByKeyword(key: String): List<Movie> {
+        val movieApiResponse = api.searchByKeyword(key)
+
+        val movies = movieApiResponse.films.map { mapApiResponseToMovie(it) }
+        return movies
+    }
+
+    override suspend fun getCountries(): List<Country> {
+        val data = api.getFilters()
+        val countries = data.countries.map { country -> country  }
+        return countries
+    }
+
+    override suspend fun getGenres(): List<Genre> {
+        val data = api.getFilters()
+        val genres = data.genres.map { genre -> genre }
+        return genres
     }
 
 

@@ -4,7 +4,10 @@ import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path
 import retrofit2.http.Query
+import sdu.project.cinemaapp.data.DTO.CountryGenreDto
 import sdu.project.cinemaapp.data.DTO.ImageListDto
+import sdu.project.cinemaapp.data.DTO.MovieApiResponse
+import sdu.project.cinemaapp.data.DTO.MovieApiResponseDto
 import sdu.project.cinemaapp.data.DTO.MovieListDto
 import sdu.project.cinemaapp.data.DTO.SimilarMoviesDto
 import sdu.project.cinemaapp.domain.model.Actor
@@ -58,4 +61,16 @@ interface MoviesApi {
     suspend fun getSimilarMovies(
         @Path("id") filmId: Int,
     ): SimilarMoviesDto
+
+    @Headers("X-API-KEY: $API_KEY")
+    @GET("/api/v2.1/films/search-by-keyword")
+    suspend fun searchByKeyword(
+        @Query("keyword") keyword: String,
+        @Query("page") page: Int = 1
+    ): MovieApiResponseDto
+
+    @Headers("X-API-KEY: $API_KEY")
+    @GET("/api/v2.2/films/filters")
+    suspend fun getFilters(): CountryGenreDto
+
 }

@@ -1,32 +1,36 @@
 package sdu.project.cinemaapp.presentation.ui.navigation
 
-import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import sdu.project.cinemaapp.presentation.navigation.BottomBarNavigation
 import sdu.project.cinemaapp.presentation.ui.actor.ActorScreen
-import sdu.project.cinemaapp.presentation.ui.components.BottomBar
 import sdu.project.cinemaapp.presentation.ui.profile.ProfileScreen
-import sdu.project.cinemaapp.presentation.ui.screens.SearchScreen
+import sdu.project.cinemaapp.presentation.ui.search.mainPage.SearchScreen
 import sdu.project.cinemaapp.presentation.ui.home.HomeScreen
 import sdu.project.cinemaapp.presentation.ui.details.MovieDetailsScreen
 import sdu.project.cinemaapp.presentation.ui.filmography.FilmographyScreen
 import sdu.project.cinemaapp.presentation.ui.galleryPage.GalleryScreen
 import sdu.project.cinemaapp.presentation.ui.list.ListObjectsScreen
+import sdu.project.cinemaapp.presentation.ui.search.filter.components.CountryScreen
+import sdu.project.cinemaapp.presentation.ui.search.filter.FilterScreen
+import sdu.project.cinemaapp.presentation.ui.search.filter.FilterViewModel
+import sdu.project.cinemaapp.presentation.ui.search.filter.components.GenreScreen
+import sdu.project.cinemaapp.presentation.ui.search.filter.components.PeriodScreen
 
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel: FilterViewModel = hiltViewModel()
 ) {
     NavHost(
         navController = navController,
-        startDestination = BottomBarNavigation.Home.route
+        startDestination = BottomBarNavigation.Home.route,
+        route = "MainNavGraph"
     ) {
 
         composable(BottomBarNavigation.Home.route) {
@@ -49,7 +53,7 @@ fun MainNavGraph(
         }
 
         composable(route = BottomBarNavigation.Search.route) {
-            SearchScreen()
+            SearchScreen(navController)
 
         }
         composable(route = BottomBarNavigation.Profile.route) {
@@ -68,6 +72,18 @@ fun MainNavGraph(
         }
         composable("gallery_screen") {
             GalleryScreen(navController)
+        }
+        composable("filter") {
+            FilterScreen(navController, viewModel)
+        }
+        composable("filter_country"){
+            CountryScreen(navController, viewModel)
+        }
+        composable("filter_genre") {
+            GenreScreen(navController, viewModel)
+        }
+        composable("filter_period"){
+            PeriodScreen(navController, viewModel)
         }
     }
 }
