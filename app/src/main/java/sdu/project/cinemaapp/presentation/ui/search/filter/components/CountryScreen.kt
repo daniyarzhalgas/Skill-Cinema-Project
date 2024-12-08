@@ -35,15 +35,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import sdu.project.cinemaapp.presentation.ui.search.filter.FilterEvent
-import sdu.project.cinemaapp.presentation.ui.search.filter.FilterViewModel
+import sdu.project.cinemaapp.presentation.ui.search.mainPage.SearchEvent
+import sdu.project.cinemaapp.presentation.ui.search.mainPage.SearchViewModel
 
 @Composable
 fun CountryScreen(
     navController: NavHostController,
-    viewModel: FilterViewModel = hiltViewModel()
+    viewModel: SearchViewModel = hiltViewModel()
 ) {
-    val countries = viewModel.countries
+    val countries by viewModel.countries.collectAsState()
     val selectedCountry by viewModel.country.collectAsState()
     val searchQuery = remember { mutableStateOf("") }
 
@@ -65,7 +65,7 @@ fun CountryScreen(
             )
 
             IconButton(
-                onClick = { viewModel.event(navController, FilterEvent.OnBackClicked) },
+                onClick = { viewModel.event(navController, SearchEvent.OnBackClicked) },
                 modifier = Modifier.align(Alignment.CenterStart)
             ) {
                 Icon(
@@ -118,17 +118,17 @@ fun CountryScreen(
 
 
         LazyColumn {
-            items(countries.filter { it.contains(searchQuery.value, ignoreCase = true) }) { country ->
+            items(countries.filter { it.country.contains(searchQuery.value, ignoreCase = true) }) { country ->
                 Text(
-                    text = country,
+                    text = country.country,
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            viewModel.event(navController, FilterEvent.OnCountrySelected(country))
+                            viewModel.event(navController, SearchEvent.OnCountrySelected(country.country))
                         }
                         .padding(vertical = 8.dp)
                         .background(
-                            if (selectedCountry == country)
+                            if (selectedCountry == country.country)
                                 Color(0xFFB5B5C9).copy(alpha = 0.3f)
                             else
                                 Color.Transparent,

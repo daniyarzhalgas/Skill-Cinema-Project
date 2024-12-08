@@ -3,6 +3,7 @@ package sdu.project.cinemaapp.data.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 import sdu.project.cinemaapp.domain.model.Movie
@@ -39,4 +40,22 @@ interface MovieDao {
     @Query("select count(collectionName) from movie where collectionName Like '%' || :collection || '%'")
     fun getCollectionCount(collection : String): Flow<Int>
 
+    @Query("SELECT * FROM Movie WHERE :collectionName = collectionName")
+    suspend fun getMoviesWithCollection(collectionName: String): List<Movie>
+
+    @Query("UPDATE Movie SET collectionName = :updatedCollection WHERE id = :movieId")
+    suspend fun updateMovieCollection(movieId: Int, updatedCollection: List<String>?)
+
+    @Transaction
+    suspend fun deleteCollectionAndUpdateMovies(collectionName: String) {
+        removeCollectionFromMovies(collectionName)
+    }
+
+    suspend fun removeCollectionFromMovies(collectionName: String) {
+        val moviesWithCollection = getMoviesWithCollection(collectionName)
+        for (movie in moviesWithCollection) {
+            val updatedCollection = movie.collectionName?.filterNot { it == collectionName }
+            updateMovieCollection(movie.id, updatedCollection)
+        }
+    }
 }

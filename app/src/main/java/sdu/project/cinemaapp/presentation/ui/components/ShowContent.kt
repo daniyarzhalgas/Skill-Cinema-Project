@@ -22,7 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import sdu.project.cinemaapp.presentation.ui.search.filter.FilterEvent
+import sdu.project.cinemaapp.presentation.ui.search.mainPage.SearchEvent
 
 @Composable
 fun ShowContent(
@@ -31,7 +31,7 @@ fun ShowContent(
     isFirst: Boolean,
     selectedTab: String,
     title: String,
-    onClick: (FilterEvent) -> Unit
+    onClick: (SearchEvent) -> Unit
 ) {
 
     Column(
@@ -58,7 +58,7 @@ fun ShowContent(
                         .weight(1f)
                         .clip(RoundedCornerShape(20.dp))
                         .background(if (selectedTab == tab) Color.Blue else Color.White)
-                        .clickable { onClick(FilterEvent.OnTabsSelected(isFirst, tab))}
+                        .clickable { onClick(SearchEvent.OnTabsSelected(isFirst, tab))}
                         .padding(vertical = 8.dp),
                     contentAlignment = Alignment.Center
                 ) {

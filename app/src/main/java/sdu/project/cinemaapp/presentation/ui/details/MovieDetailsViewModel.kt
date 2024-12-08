@@ -8,12 +8,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import sdu.project.cinemaapp.data.local.AppDatabase
 import sdu.project.cinemaapp.domain.model.FilmStaff
 import sdu.project.cinemaapp.domain.model.MovieImage
 import sdu.project.cinemaapp.domain.model.Movie
+import sdu.project.cinemaapp.domain.model.MovieCollection
 import sdu.project.cinemaapp.domain.model.SimilarMovie
 import sdu.project.cinemaapp.domain.repository.MoviesRepository
 import sdu.project.cinemaapp.presentation.state.ScreenState
@@ -50,6 +54,13 @@ class MovieDetailsViewModel @Inject constructor(
 
     private val _similarFilms = MutableStateFlow<List<SimilarMovie>>(emptyList())
     val similarFilms = _similarFilms.asStateFlow()
+
+    val movieCollections: StateFlow<List<MovieCollection>> = moviesRepository.getCollections()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(500),
+            initialValue = emptyList()
+        )
 
 
     fun event(navController: NavHostController, event: MovieDetailsEvent) {

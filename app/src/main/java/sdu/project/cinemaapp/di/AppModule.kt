@@ -9,6 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import sdu.project.cinemaapp.data.dao.CollectionDao
 import sdu.project.cinemaapp.data.dao.MovieDao
 import sdu.project.cinemaapp.data.local.AppDatabase
 import sdu.project.cinemaapp.data.remote.MoviesApi
@@ -47,4 +48,6 @@ object AppModule {
     @Provides
     fun provideMovieDao(db: AppDatabase): MovieDao = db.movieDao()
 
+    @Provides
+    fun provideCollectionDao(db: AppDatabase) : CollectionDao = db.collectionDao()
 }

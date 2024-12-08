@@ -1,20 +1,22 @@
 package sdu.project.cinemaapp.presentation.ui.profile
 
 import android.util.Log
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import sdu.project.cinemaapp.domain.model.Movie
+import sdu.project.cinemaapp.domain.model.MovieCollection
 import sdu.project.cinemaapp.domain.repository.MoviesRepository
 import sdu.project.cinemaapp.presentation.state.ScreenState
 import sdu.project.cinemaapp.presentation.viewModel.SharedViewModel
@@ -35,6 +37,15 @@ class ProfileViewModel @Inject constructor(
     private val _collectionCount = MutableStateFlow<Map<String, Int>>(emptyMap())
     val collectionCount = _collectionCount.asStateFlow()
 
+    var collectionTitle by mutableStateOf("")
+        private set
+
+    val movieCollection: StateFlow<List<MovieCollection>> = rep.getCollections()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(500),
+            initialValue = emptyList()
+        )
 
     init {
         fetchProfileData()
@@ -79,10 +90,30 @@ class ProfileViewModel @Inject constructor(
                 }
             }
 
+            is ProfileEvent.OnTextChange -> {
+                collectionTitle = event.title
+            }
+
+            is ProfileEvent.CreateCollection -> {
+                createCollection(event.title)
+                collectionTitle = ""
+            }
         }
     }
 
-    fun getCollectionCount(title: String){
+    private fun createCollection(title: String) {
+        viewModelScope.launch {
+            val collection = rep.getCollection(title)
+
+            if (collection == null) {
+                rep.upsertCollection(MovieCollection(title))
+            }
+            else
+                rep.upsertCollection(collection)
+        }
+    }
+
+    fun getCollectionCount(title: String) {
         viewModelScope.launch {
             rep.getCollectionCount(title).collect { count ->
                 _collectionCount.update { currentCount ->
@@ -99,12 +130,12 @@ class ProfileViewModel @Inject constructor(
     }
 
 
-private fun deleteAllWatchedMovies() {
-    viewModelScope.launch {
-        rep.deleteAllWatchedMovies()
-        fetchProfileData()
+    private fun deleteAllWatchedMovies() {
+        viewModelScope.launch {
+            rep.deleteAllWatchedMovies()
+            fetchProfileData()
+        }
     }
-}
 
 
 }

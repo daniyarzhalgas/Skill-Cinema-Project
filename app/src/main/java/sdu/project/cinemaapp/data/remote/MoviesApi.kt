@@ -5,6 +5,7 @@ import retrofit2.http.Headers
 import retrofit2.http.Path
 import retrofit2.http.Query
 import sdu.project.cinemaapp.data.DTO.CountryGenreDto
+import sdu.project.cinemaapp.data.DTO.FilterFilmsDto
 import sdu.project.cinemaapp.data.DTO.ImageListDto
 import sdu.project.cinemaapp.data.DTO.MovieApiResponse
 import sdu.project.cinemaapp.data.DTO.MovieApiResponseDto
@@ -76,10 +77,16 @@ interface MoviesApi {
 
     @Headers("X-API-KEY: $API_KEY")
     @GET("/api/v2.2/films")
-    suspend fun getFilms(
+    suspend fun getFilterFilms(
         @Query("countries") countries: List<Int>,
-        @Query("genres") genres: List<Int>
-
-    ): CountryGenreDto
-
+        @Query("genres") genres: List<Int>,
+        @Query("order") order : String,
+        @Query("type") type : String,
+        @Query("ratingFrom") ratingFrom : Int,
+        @Query("ratingTo") ratingTo: Int,
+        @Query("yearFrom") yearFrom: Int,
+        @Query("yearTo") yearTo: Int,
+        @Query("keyword") keyword: String,
+        @Query("page") page: Int = 1
+    ): FilterFilmsDto
 }

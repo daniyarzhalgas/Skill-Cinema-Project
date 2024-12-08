@@ -1,4 +1,4 @@
-package sdu.project.cinemaapp.presentation.ui.search.filter
+package sdu.project.cinemaapp.presentation.ui.search.filter.components
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -18,15 +18,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.RangeSlider
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,18 +37,20 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import sdu.project.cinemaapp.R
 import sdu.project.cinemaapp.presentation.ui.components.ShowContent
+import sdu.project.cinemaapp.presentation.ui.search.mainPage.SearchEvent
+import sdu.project.cinemaapp.presentation.ui.search.mainPage.SearchViewModel
 
 
 @Composable
 fun FilterScreen(
     navController: NavHostController,
-    viewModel: FilterViewModel = hiltViewModel(),
+    viewModel: SearchViewModel = hiltViewModel(),
 ) {
     FilterPage(viewModel) { viewModel.event(navController, it) }
 }
 
 @Composable
-fun FilterPage(viewModel: FilterViewModel, onClick: (FilterEvent) -> Unit) {
+fun FilterPage(viewModel: SearchViewModel, onClick: (SearchEvent) -> Unit) {
     val selectedCountry by viewModel.country.collectAsState()
     val selectedGenre by viewModel.genre.collectAsState()
     val selectedYearFrom by viewModel.yearFrom.collectAsState()
@@ -76,7 +74,7 @@ fun FilterPage(viewModel: FilterViewModel, onClick: (FilterEvent) -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(
-                    onClick = { onClick(FilterEvent.OnBackClicked) }
+                    onClick = { onClick(SearchEvent.OnBackClicked) }
                 ) {
                     Image(
                         painter = painterResource(R.drawable.caret_left),
@@ -97,17 +95,17 @@ fun FilterPage(viewModel: FilterViewModel, onClick: (FilterEvent) -> Unit) {
         item {
             ShowContent(
                 tabs = tabs,
-                selectedTab = selectedTab,
+                selectedTab = selectedTab.displayName,
                 isFirst = true,
                 title = "Показывать"
             ){ onClick(it) }
         }
         item {
-            Sorting("Страна", selectedCountry) { onClick(FilterEvent.OnCountryClicked) }
+            Sorting("Страна", selectedCountry) { onClick(SearchEvent.OnCountryClicked) }
             CustomDivider()
-            Sorting("Жанр", selectedGenre) {onClick(FilterEvent.OnGenreClicked)}
+            Sorting("Жанр", selectedGenre) {onClick(SearchEvent.OnGenreClicked)}
             CustomDivider()
-            Sorting("Год", "c $selectedYearFrom до $selectedYearTo") {onClick(FilterEvent.OnYearClicked)}
+            Sorting("Год", "c $selectedYearFrom до $selectedYearTo") {onClick(SearchEvent.OnYearClicked)}
             CustomDivider()
             Sorting("Рейтинг", "любой") {}
         }
@@ -116,13 +114,15 @@ fun FilterPage(viewModel: FilterViewModel, onClick: (FilterEvent) -> Unit) {
             CustomDivider()
             ShowContent(
                 tabs = tabs2,
-                selectedTab = selectedTabSecond,
+                selectedTab = selectedTabSecond.displayName,
                 isFirst = false,
                 title = "Сортировать"
             ){onClick(it)}
             Box(modifier = Modifier.fillMaxWidth()) {
                 Button(
-                    onClick = { TODO() },
+
+                    onClick = { Log.i("FilterScreen", "clicked")
+                        onClick(SearchEvent.OnFilterUsed) },
                     modifier = Modifier.align(Alignment.Center),
                     colors = ButtonDefaults.buttonColors(Color.Blue)
                 ) {
@@ -167,7 +167,7 @@ fun CustomDivider() {
 }
 
 @Composable
-fun RangeSliderExample(sliderValues: ClosedFloatingPointRange<Float>, onClick: (FilterEvent) -> Unit) {
+fun RangeSliderExample(sliderValues: ClosedFloatingPointRange<Float>, onClick: (SearchEvent) -> Unit) {
 
     Column(
         modifier = Modifier
@@ -178,7 +178,7 @@ fun RangeSliderExample(sliderValues: ClosedFloatingPointRange<Float>, onClick: (
         RangeSlider(
             value = sliderValues,
             onValueChange = { newValues ->
-                onClick(FilterEvent.OnSliderValueChange(newValues))},
+                onClick(SearchEvent.OnSliderValueChange(newValues))},
             valueRange = 1f..10f,
             steps = 0,
             onValueChangeFinished = { /* По завершению изменения */ },

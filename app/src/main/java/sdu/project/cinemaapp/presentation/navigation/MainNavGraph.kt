@@ -16,16 +16,16 @@ import sdu.project.cinemaapp.presentation.ui.filmography.FilmographyScreen
 import sdu.project.cinemaapp.presentation.ui.galleryPage.GalleryScreen
 import sdu.project.cinemaapp.presentation.ui.list.ListObjectsScreen
 import sdu.project.cinemaapp.presentation.ui.search.filter.components.CountryScreen
-import sdu.project.cinemaapp.presentation.ui.search.filter.FilterScreen
-import sdu.project.cinemaapp.presentation.ui.search.filter.FilterViewModel
+import sdu.project.cinemaapp.presentation.ui.search.filter.components.FilterScreen
 import sdu.project.cinemaapp.presentation.ui.search.filter.components.GenreScreen
 import sdu.project.cinemaapp.presentation.ui.search.filter.components.PeriodScreen
+import sdu.project.cinemaapp.presentation.ui.search.mainPage.SearchViewModel
 
 
 @Composable
 fun MainNavGraph(
     navController: NavHostController,
-    viewModel: FilterViewModel = hiltViewModel()
+    viewModel: SearchViewModel = hiltViewModel()
 ) {
     NavHost(
         navController = navController,
@@ -53,7 +53,7 @@ fun MainNavGraph(
         }
 
         composable(route = BottomBarNavigation.Search.route) {
-            SearchScreen(navController)
+            SearchScreen(navController, viewModel)
 
         }
         composable(route = BottomBarNavigation.Profile.route) {

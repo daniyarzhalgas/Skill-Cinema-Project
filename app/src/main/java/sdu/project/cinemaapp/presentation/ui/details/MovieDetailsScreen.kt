@@ -1,6 +1,8 @@
+
 package sdu.project.cinemaapp.presentation.ui.details
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,21 +15,28 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ModalBottomSheetProperties
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,8 +46,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.test.isFocusable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -55,6 +66,7 @@ import sdu.project.cinemaapp.data.local.MockData
 import sdu.project.cinemaapp.domain.model.FilmStaff
 import sdu.project.cinemaapp.domain.model.MovieImage
 import sdu.project.cinemaapp.domain.model.Movie
+import sdu.project.cinemaapp.domain.model.MovieCollection
 import sdu.project.cinemaapp.domain.model.SimilarMovie
 import sdu.project.cinemaapp.presentation.state.ScreenState
 import sdu.project.cinemaapp.presentation.ui.bottomSheet.BottomSheetScreen
@@ -82,7 +94,7 @@ fun MovieDetailsScreen(
     val getStaff by viewModel.staff.collectAsStateWithLifecycle()
     val getImages by viewModel.images.collectAsStateWithLifecycle()
     val getSimilarFilms by viewModel.similarFilms.collectAsStateWithLifecycle()
-
+    val movieCollection by viewModel.movieCollections.collectAsState()
 
     when (state) {
         is ScreenState.Initial -> {}
@@ -94,7 +106,8 @@ fun MovieDetailsScreen(
                 getStaff,
                 getImages,
                 getSimilarFilms,
-                navController
+                navController,
+                movieCollection
             ) {
                 viewModel.event(navController, it)
             }
@@ -114,6 +127,7 @@ fun MovieContent(
     images: List<MovieImage>,
     similarFilms: List<SimilarMovie>,
     navController: NavHostController,
+    movieCollections: List<MovieCollection>,
     onClick: (MovieDetailsEvent) -> Unit
 ) {
     val sharedViewModel: SharedViewModel = hiltViewModel()
@@ -127,7 +141,7 @@ fun MovieContent(
     }
 
 
-    var noteState by remember (movie) {
+    var noteState by remember(movie) {
         mutableStateOf(movie?.collectionName?.contains("Хочу посмотреть") == true)
     }
 
@@ -224,7 +238,12 @@ fun MovieContent(
                                 .wrapContentSize()
                                 .clickable {
                                     likeState = !likeState
-                                    onClick(MovieDetailsEvent.UpdateCollection(movie.kinopoiskId, "Любимые"))
+                                    onClick(
+                                        MovieDetailsEvent.UpdateCollection(
+                                            movie.kinopoiskId,
+                                            "Любимые"
+                                        )
+                                    )
                                 }
                         )
 
@@ -236,18 +255,15 @@ fun MovieContent(
                                 .padding(start = 16.dp)
                                 .clickable {
                                     noteState = !noteState
-                                    onClick(MovieDetailsEvent.UpdateCollection(movie.kinopoiskId, "Хочу посмотреть"))
+                                    onClick(
+                                        MovieDetailsEvent.UpdateCollection(
+                                            movie.kinopoiskId,
+                                            "Хочу посмотреть"
+                                        )
+                                    )
                                 }
                         )
 
-                        Image(
-                            painter = painterResource(R.drawable.underlined_eye),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .wrapContentSize()
-                                .padding(start = 16.dp)
-                                .clickable { TODO() }
-                        )
 
                         Image(
                             painter = painterResource(R.drawable.share),
@@ -257,13 +273,12 @@ fun MovieContent(
                                 .padding(start = 16.dp)
                                 .clickable { TODO() }
                         )
-
+                        Spacer(Modifier.width(20.dp))
                         Image(
                             painter = painterResource(R.drawable.dots),
                             contentDescription = "",
                             modifier = Modifier
-                                .size(34.dp)
-                                .padding(start = 16.dp)
+                                .size(25.dp)
                                 .clickable {
                                     showBottomSheet = true
                                 }
@@ -348,13 +363,15 @@ fun MovieContent(
                 Spacer(modifier = Modifier.height(30.dp))
             }
         }
-        if (showBottomSheet) {
+
+
+        if(showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = { showBottomSheet = false },
                 sheetState = sheetState,
-                modifier = Modifier.height(500.dp)
+
             ) {
-                BottomSheetScreen(movie!!.kinopoiskId)
+                BottomSheetScreen(movie!!.kinopoiskId, movieCollections)
             }
         }
     }

@@ -33,12 +33,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import sdu.project.cinemaapp.presentation.ui.search.filter.FilterEvent
-import sdu.project.cinemaapp.presentation.ui.search.filter.FilterViewModel
+import sdu.project.cinemaapp.presentation.ui.search.mainPage.SearchEvent
+import sdu.project.cinemaapp.presentation.ui.search.mainPage.SearchViewModel
 
 
 @Composable
-fun PeriodScreen(navController: NavHostController, viewModel: FilterViewModel) {
+fun PeriodScreen(navController: NavHostController, viewModel: SearchViewModel) {
     val yearsFirst by viewModel.visibleYearsFirst.collectAsState()
     val yearsSecond by viewModel.visibleYearsSecond.collectAsState()
     val selectedYearFrom by viewModel.yearFrom.collectAsState()
@@ -102,7 +102,7 @@ fun PeriodScreen(navController: NavHostController, viewModel: FilterViewModel) {
 
         Button(
             onClick = {
-                viewModel.event(navController, FilterEvent.OnBackClicked)
+                viewModel.event(navController, SearchEvent.OnBackClicked)
                 Log.i("", "$selectedYearTo   $selectedYearFrom")
             },
             modifier = Modifier
@@ -127,7 +127,7 @@ fun YearSelector(
     years: List<Int>,
     isYearFrom: Boolean,
     selectedYear: Int,
-    onYearSelected: (FilterEvent) -> Unit
+    onYearSelected: (SearchEvent) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -147,10 +147,10 @@ fun YearSelector(
                 color = Color(0xFF3D3BFF),
                 modifier = Modifier.weight(1f)
             )
-            IconButton(onClick = { onYearSelected(FilterEvent.NavigateYears(isYearFrom, backward = true)) }) {
+            IconButton(onClick = { onYearSelected(SearchEvent.NavigateYears(isYearFrom, backward = true)) }) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Previous")
             }
-            IconButton(onClick = { onYearSelected(FilterEvent.NavigateYears(isYearFrom,backward = false)) }) {
+            IconButton(onClick = { onYearSelected(SearchEvent.NavigateYears(isYearFrom,backward = false)) }) {
                 Icon(imageVector = Icons.Default.ArrowForward, contentDescription = "Next")
             }
         }
@@ -166,7 +166,7 @@ fun YearSelector(
                     Text(
                         text = year.toString(),
                         modifier = Modifier
-                            .clickable { onYearSelected(FilterEvent.OnYearSelected(isYearFrom, year)) }
+                            .clickable { onYearSelected(SearchEvent.OnYearSelected(isYearFrom, year)) }
                             .padding(4.dp),
                         style = MaterialTheme.typography.bodyLarge,
                         color = if (year == selectedYear) Color(0xFF4F4DFF) else Color.Black

@@ -28,23 +28,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import sdu.project.cinemaapp.presentation.ui.search.filter.FilterEvent
-import sdu.project.cinemaapp.presentation.ui.search.filter.FilterViewModel
+import sdu.project.cinemaapp.presentation.ui.search.mainPage.SearchEvent
+import sdu.project.cinemaapp.presentation.ui.search.mainPage.SearchViewModel
 
 @Composable
 fun GenreScreen(
     navController: NavHostController,
-    viewModel: FilterViewModel
+    viewModel: SearchViewModel
 ) {
     val selectedGenre by viewModel.genre.collectAsState()
-    val genres = viewModel.genres
+    val genres by viewModel.genres.collectAsState()
     val searchQuery = remember { mutableStateOf("") }
 
     Column(
@@ -121,15 +120,15 @@ fun GenreScreen(
 
         // List of genres with selectable items
         LazyColumn {
-            items(genres.filter { it.contains(searchQuery.value, ignoreCase = true) }) { genre ->
+            items(genres.filter { it.genre.contains(searchQuery.value, ignoreCase = true) }) { genre ->
                 Text(
-                    text = genre,
+                    text = genre.genre,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { viewModel.event(navController, FilterEvent.OnGenreSelected(genre)) } // Handle genre selection
+                        .clickable { viewModel.event(navController, SearchEvent.OnGenreSelected(genre.genre)) } // Handle genre selection
                         .padding(vertical = 8.dp)
                         .background(
-                            if (selectedGenre == genre)
+                            if (selectedGenre == genre.genre)
                                 Color(0xFFB5B5C9).copy(alpha = 0.3f) // Background color when selected
                             else
                                 Color.Transparent, // Transparent when not selected

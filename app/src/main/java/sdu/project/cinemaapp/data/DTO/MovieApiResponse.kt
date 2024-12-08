@@ -17,6 +17,7 @@ data class MovieApiResponse(
     val genres: List<Genre>?,
     val type: String?,
     val ratingVoteCount: Int?,
+    val rating : String
 )
 
 fun mapApiResponseToMovie(apiResponse: MovieApiResponse): Movie {
@@ -31,17 +32,17 @@ fun mapApiResponseToMovie(apiResponse: MovieApiResponse): Movie {
         year = apiResponse.year?.toInt(),
         filmLength = apiResponse.filmLength?.let { parseFilmLength(it) },
         description = apiResponse.description,
-        countries = apiResponse.countries?.map { Country(it.country) },
-        genres = apiResponse.genres?.map { Genre(it.genre) },
-        type = null,
+        countries = apiResponse.countries,
+        genres = apiResponse.genres,
+        type = apiResponse.type,
+        ratingKinopoisk = apiResponse.rating.toNullIfLiteralNull()?.toDouble(),
+        ratingKinopoiskVoteCount = apiResponse.ratingVoteCount,
         reviewsCount = null,
-        ratingKinopoisk = null,
         imdbId = null,
         coverUrl = null,
         logoUrl = null,
         ratingGoodReview = null,
         ratingGoodReviewVoteCount = null,
-        ratingKinopoiskVoteCount = null,
         ratingImdb = null,
         ratingImdbVoteCount = null,
         ratingFilmCritics = null,
@@ -81,4 +82,8 @@ fun parseFilmLength(filmLength: String): Int? {
     } catch (e: Exception) {
         null
     }
+}
+
+fun String?.toNullIfLiteralNull() : String?{
+    return if (this == "null") null else this
 }

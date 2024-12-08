@@ -5,4 +5,6 @@ sealed interface ProfileEvent {
     data class NavigateToMovie(val id: Int) : ProfileEvent
     data class NavigateToListPage(val title: String) : ProfileEvent
     data class NavigateToCollection(val title: String) : ProfileEvent
+    data class OnTextChange(val title: String) : ProfileEvent
+    data class CreateCollection(val title: String): ProfileEvent
 }

@@ -7,6 +7,7 @@ import sdu.project.cinemaapp.data.local.AppDatabase
 
 import sdu.project.cinemaapp.data.remote.MoviesApi
 import sdu.project.cinemaapp.domain.model.Actor
+import sdu.project.cinemaapp.domain.model.MovieCollection
 import sdu.project.cinemaapp.domain.model.Country
 import sdu.project.cinemaapp.domain.model.FilmStaff
 import sdu.project.cinemaapp.domain.model.Genre
@@ -102,6 +103,32 @@ class MoviesRepositoryImpl @Inject constructor(
         return db.movieDao().getCollectionCount(collection)
     }
 
+    override suspend fun getFilterFilms(
+        countries: List<Int>,
+        genres: List<Int>,
+        order: String,
+        type: String,
+        ratingFrom: Int,
+        ratingTo: Int,
+        yearFrom: Int,
+        yearTo: Int,
+        keyword: String,
+        page: Int
+    ): List<Movie> {
+        return api.getFilterFilms(
+            countries,
+            genres,
+            order,
+            type,
+            ratingFrom,
+            ratingTo,
+            yearFrom,
+            yearTo,
+            keyword,
+            page
+        ).items
+    }
+
     override suspend fun searchByKeyword(key: String): List<Movie> {
         val movieApiResponse = api.searchByKeyword(key)
 
@@ -111,7 +138,7 @@ class MoviesRepositoryImpl @Inject constructor(
 
     override suspend fun getCountries(): List<Country> {
         val data = api.getFilters()
-        val countries = data.countries.map { country -> country  }
+        val countries = data.countries.map { country -> country }
         return countries
     }
 
@@ -121,5 +148,21 @@ class MoviesRepositoryImpl @Inject constructor(
         return genres
     }
 
+    override suspend fun upsertCollection(movieCollection: MovieCollection) {
+        db.collectionDao().upsert(movieCollection)
+    }
+
+    override suspend fun getCollection(collection: String): MovieCollection? {
+        return  db.collectionDao().getCollection(collection)
+    }
+
+    override fun getCollections(): Flow<List<MovieCollection>> {
+        return db.collectionDao().getCollections()
+    }
+
+    override suspend fun deleteMovieCollection(collectionName: String) {
+        db.movieDao().deleteCollectionAndUpdateMovies(collectionName)
+        db.collectionDao().deleteCollection(collectionName)
+    }
 
 }

@@ -5,5 +5,6 @@ import androidx.room.PrimaryKey
 
 
 data class Genre(
+    val id: Int,
     val genre: String
 )

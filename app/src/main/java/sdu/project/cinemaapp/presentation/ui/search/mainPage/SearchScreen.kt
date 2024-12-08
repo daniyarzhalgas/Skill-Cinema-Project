@@ -58,7 +58,7 @@ fun SearchScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val movies by viewModel.movies.collectAsStateWithLifecycle()
-    val searchText by viewModel.searchText.collectAsStateWithLifecycle()
+    val searchText = viewModel.searchText
 
 
     SearchScreenContent(state, movies, searchText) { viewModel.event(navController, it) }

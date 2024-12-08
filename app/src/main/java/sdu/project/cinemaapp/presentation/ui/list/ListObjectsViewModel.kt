@@ -5,9 +5,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import sdu.project.cinemaapp.domain.model.MovieCollection
+import sdu.project.cinemaapp.domain.repository.MoviesRepository
 import sdu.project.cinemaapp.presentation.state.ScreenState
 import sdu.project.cinemaapp.presentation.viewModel.SharedViewModel
 import javax.inject.Inject
@@ -21,7 +24,6 @@ class ListObjectsViewModel @Inject constructor(
 
     private val _movies = MutableStateFlow<List<Any>>(emptyList())
     val movies = _movies.asStateFlow()
-
 
     fun event(navController: NavController, event: ListObjectsEvent) {
         when (event) {
@@ -50,6 +52,7 @@ class ListObjectsViewModel @Inject constructor(
             _state.update { ScreenState.Loading }
             try {
                 val any = sharedViewModel.selectedDataList.value
+
                 _movies.update { any }
                 _state.update { ScreenState.Success }
 

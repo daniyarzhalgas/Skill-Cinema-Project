@@ -2,6 +2,7 @@ package sdu.project.cinemaapp.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import sdu.project.cinemaapp.domain.model.Actor
+import sdu.project.cinemaapp.domain.model.MovieCollection
 import sdu.project.cinemaapp.domain.model.Country
 import sdu.project.cinemaapp.domain.model.FilmStaff
 import sdu.project.cinemaapp.domain.model.Genre
@@ -31,8 +32,27 @@ interface MoviesRepository {
     suspend fun getMoviesByCollection(collection: String): List<Movie>
     fun getCollectionCount(collection: String): Flow<Int>
 
+    suspend fun getFilterFilms(
+        countries: List<Int>,
+        genres: List<Int>,
+        order: String,
+        type: String,
+        ratingFrom: Int,
+        ratingTo: Int,
+        yearFrom: Int,
+        yearTo: Int,
+        keyword: String,
+        page: Int
+    ): List<Movie>
+
     suspend fun searchByKeyword(key: String): List<Movie>
 
     suspend fun getCountries(): List<Country>
-    suspend fun getGenres() : List<Genre>
+    suspend fun getGenres(): List<Genre>
+
+
+    suspend fun upsertCollection(movieCollection: MovieCollection)
+    suspend fun getCollection(collection: String): MovieCollection?
+    fun getCollections(): Flow<List<MovieCollection>>
+    suspend fun deleteMovieCollection(collectionName: String)
 }
